@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FoodStock\FoodStock.Model.csproj" />
+    <ProjectReference Include="..\FoodStock.Persistence.Collection\FoodStock.Persistence.Collection.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
