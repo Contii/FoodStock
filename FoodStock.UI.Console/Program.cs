@@ -5,20 +5,28 @@ using FoodStock.Persistence.Collection.Repositories;
 Console.WriteLine("Hello, World!");
  
 var repositoryCollection = new CollectionsGenericCrudRepository<CategoryModel>([]); // [] ao invés de new List<CategoryModel>()
-repositoryCollection.Add(new CategoryModel ( 1, "Grãos", "Arroz"));
 
-try
-{
-    repositoryCollection.Add(new CategoryModel ( 1, "Grãos", "Arroz"));
+repositoryCollection.Add(new CategoryModel ( 1, "Grãos", "Arroz"));
+try {
+    repositoryCollection.Add(new CategoryModel ( 2, "Grãos", "Arroz"));
 }
-catch (InvalidOperationException e)
-{
+catch (InvalidOperationException e) {
     Console.WriteLine(e.Message);
 }
 
+foreach (var category in repositoryCollection.ObtainAll()) {
+    Console.WriteLine(category);
+}
 
-var categories = repositoryCollection.ObtainAll();
-foreach (var category in categories)
-{
+
+
+try {
+repositoryCollection.Remove(new CategoryModel ( 3, "Grãos", "Arroz"));
+}
+catch (InvalidOperationException e) {
+    Console.WriteLine(e.Message);
+}
+
+foreach (var category in repositoryCollection.ObtainAll()) {
     Console.WriteLine(category);
 }
