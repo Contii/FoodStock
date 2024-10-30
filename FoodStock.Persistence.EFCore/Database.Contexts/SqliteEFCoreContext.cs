@@ -14,7 +14,7 @@ public class SqliteEFCoreContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite($"Data Source=G:/01 Arquivos Joao/2.3 Repositories/00 Contii/FoodStock/FoodStock.Persistence.EFCore/utfpr.db"); // Conexão com o banco de dados SQLite
+        optionsBuilder.UseSqlite($"Data Source=../FoodStock.Persistence.EFCore/utfpr.db"); // Conexão com o banco de dados SQLite
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
