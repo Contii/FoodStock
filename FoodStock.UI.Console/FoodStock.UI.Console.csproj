@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FoodStock\FoodStock.Model.csproj" />
     <ProjectReference Include="..\FoodStock.Persistence.Collection\FoodStock.Persistence.Collection.csproj" />
+    <ProjectReference Include="..\FoodStock.Persistence.EFCore\FoodStock.Persistence.EFCore.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

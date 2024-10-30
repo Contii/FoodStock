@@ -1,32 +1,15 @@
 ﻿// See https://aka.ms/new-console-template for more information
+
 using FoodStock.Model.Common;
-using FoodStock.Persistence.Collection.Repositories;
+using FoodStock.Persistence.EFCore.Database.Contexts;
+using FoodStock.Persistence.EFCore.Repositories;
 
-Console.WriteLine("Hello, World!");
- 
-var repositoryCollection = new CollectionsGenericCrudRepository<CategoryModel>([]); // [] ao invés de new List<CategoryModel>()
+var efDbContext = new SqliteEFCoreContext();
+var repositoryEF = new GenericCrudRepositoryEFCore<CategoryModel>(new SqliteEFCoreContext());
+repositoryEF.Add(efDbContext.Categories, new CategoryModel(1, "grains", "Rice"));
+repositoryEF.Add(efDbContext.Categories, new CategoryModel(2, "grains", "Rice"));
 
-repositoryCollection.Add(new CategoryModel ( 1, "Grãos", "Arroz"));
-try {
-    repositoryCollection.Add(new CategoryModel ( 2, "Grãos", "Arroz"));
-}
-catch (InvalidOperationException e) {
-    Console.WriteLine(e.Message);
-}
-
-foreach (var category in repositoryCollection.ObtainAll()) {
-    Console.WriteLine(category);
-}
-
-
-
-try {
-repositoryCollection.Remove(new CategoryModel ( 3, "Grãos", "Arroz"));
-}
-catch (InvalidOperationException e) {
-    Console.WriteLine(e.Message);
-}
-
-foreach (var category in repositoryCollection.ObtainAll()) {
-    Console.WriteLine(category);
+foreach (var category in repositoryEF.ObtainAll(efDbContext.Categories))
+{
+    Console.Write(category);
 }
