@@ -1,6 +1,6 @@
 # FoodStock
 
-FoodStock é um sistema de gerenciamento de inventário doméstico, projetado para otimizar a organização de produtos, listas de compras e o preparo de refeições. Desenvolvido como um conjunto de microsserviços, o sistema oferece uma interface interativa tanto para web quanto para dispositivos Android.
+FoodStock é um sistema de gerenciamento de inventário doméstico, projetado para otimizar a organização de produtos, listas de compras e o preparo de refeições. Desenvolvido como um conjunto de microsserviços, o sistema oferece uma interface interativa tanto para Web quanto para dispositivos Android.
 
 Este documento tem como objetivo ilustrar o escopo geral do sistema e suas principais funcionalidades, bem como as tecnologias que serão utilizadas no desenvolvimento do mesmo.
 
@@ -47,4 +47,6 @@ Este documento tem como objetivo ilustrar o escopo geral do sistema e suas princ
 
 ## Conclusão
 
-O FoodStock tem o potencial de revolucionar a forma como as pessoas gerenciam seus alimentos em casa. Com uma interface intuitiva e funcionalidades inovadoras, o sistema oferece uma solução para quem busca praticidade, organização e economia.
+O FoodStock tem o potencial de aprimorar a forma como as pessoas gerenciam seus alimentos em casa. Com uma interface intuitiva e funcionalidades úteis, o sistema oferece uma solução para quem busca praticidade, organização e economia.
+
+Este sistema faz parte da avaliação semestral da disciplina de **Tecnologias em desenvolvimento de sistemas** ministrada pelo **Prof. Dr. Everton Coimbra de Araújo** pela **Universidade Tecnológica Federal do Paraná - Campus Medianeira**. 
