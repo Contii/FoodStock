@@ -13,4 +13,7 @@ public interface IGenericCrudRepository<T> where T : class // Garantia de que se
 
     // Atualiza uma entidade existente no repositório
     void Update(T entity);
+
+    // Remove uma entidade do repositório
+    void Remove(T entity);
 }

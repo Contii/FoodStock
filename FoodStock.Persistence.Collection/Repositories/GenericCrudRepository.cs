@@ -9,6 +9,8 @@ public class CollectionsGenericCrudRepository<T>(List<T> repository) : IGenericC
 
     public void Add(T entity)
     {
+        if (repository.Contains(entity))
+            throw new InvalidOperationException("Entity already exists in the repository");
         repository.Add(entity);
     }
 
@@ -29,6 +31,8 @@ public class CollectionsGenericCrudRepository<T>(List<T> repository) : IGenericC
 
     public void Remove(T entity)
     {
+        if (!repository.Contains(entity))
+            throw new InvalidOperationException("Entity does not exist in the repository");
         repository.Remove(entity);
     }
 }
