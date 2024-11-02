@@ -1,9 +1,16 @@
+using FoodStock.Models;
+using FoodStock.Persistence;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Configure the DbContext with SQLite (?? means default connection string).
+builder.Services.AddDbContext<EFCoreContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=../utfpr.db"));
 
 var app = builder.Build();
 
@@ -15,6 +22,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthorization(); // Auth Middleware, not used in this project but good for future security implementations.
 
 app.Run();
