@@ -46,4 +46,28 @@ app.MapPost("/api/categories", async (EFCoreContext context, CategoryModel categ
     return Results.Created($"/api/categories/{category.CategoryID}", category);
 });
 
+// Update an existing category.
+app.MapPut("/api/categories/{id}", async (EFCoreContext context, int id, CategoryModel updatedCategory) =>
+{
+    var category = await context.Categories.FindAsync(id); 
+    if (category is null) return Results.NotFound(); 
+
+    category.Name = updatedCategory.Name;
+    category.Description = updatedCategory.Description;
+
+    await context.SaveChangesAsync();
+    return Results.Ok(category); 
+});
+
+// Delete a category.
+app.MapDelete("/api/categories/{id}", async (EFCoreContext context, int id) =>
+{
+    var category = await context.Categories.FindAsync(id);
+    if (category is null) return Results.NotFound();
+
+    context.Categories.Remove(category);
+    await context.SaveChangesAsync();
+    return Results.NoContent();
+});
+
 app.Run();
