@@ -1,20 +1,26 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace FoodStock.Models;
 
 public class CategoryModel
 {
     public int CategoryID { get; set; }
+    [Required]
     public string? Name { get; set; }
     public string? Description { get; set; }
+    public List<ItemModel>? Items { get; set; }
 
     public CategoryModel(int categoryID, string name, string description)
     {
         CategoryID = categoryID;
         Name = name;
         Description = description;
+        Items = new List<ItemModel>();
     }
 
     public CategoryModel()
     {
+        Items = new List<ItemModel>();
     }
 
     public override string ToString()
