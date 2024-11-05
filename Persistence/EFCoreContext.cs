@@ -28,7 +28,8 @@ public class EFCoreContext : DbContext
                 eb.Property(p => p.Description).HasMaxLength(100);
                 eb.HasMany(p => p.Items) // A category can have many items in the database.
                     .WithOne(p => p.Category) // An item belongs to a category in the database.
-                    .HasForeignKey(p => p.CategoryID); // The foreign key of the item is the CategoryID.
+                    .HasForeignKey(p => p.CategoryID) // The foreign key of the item is the CategoryID.
+                    .OnDelete(DeleteBehavior.SetNull); // If a category is deleted, the items will have the CategoryID set to null.
             });
         modelBuilder.Entity<ItemModel>( // Define the ItemModel entity.
             eb =>
