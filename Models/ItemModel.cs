@@ -8,14 +8,15 @@ public class ItemModel
     [Required]
     public string Name { get; set; }
     [MaxLength(100)]
-    public string Description { get; set; }
-    public DateTime SpoilDate { get; set; }
+    public string? Description { get; set; }
+    public DateTime? SpoilDate { get; set; }
     [Required]
     public float Measure { get; set; }
     [Required] 
+    [EnumDataType(typeof(MeasureTypeEnum))]
     public MeasureTypeEnum MeasureType { get; set; }
-    public int CategoryID { get; set; }
-    public CategoryModel Category { get; set; }
+    public int? CategoryID { get; set; }
+    public CategoryModel? Category { get; set; }
 
     public ItemModel(int itemID, string name, string description, DateTime spoilDate, float measure, MeasureTypeEnum measureType, int categoryID)
     {
@@ -32,8 +33,6 @@ public class ItemModel
     public ItemModel()
     {
         Name = string.Empty;
-        Description = string.Empty;
-        Category = new CategoryModel();
     }
 
     public override string ToString()
