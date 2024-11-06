@@ -100,4 +100,38 @@ app.MapPost("/api/items", async (EFCoreContext context, ItemModel item) =>
     return Results.Created($"/api/items/{item.ItemID}", item);
 });
 
+// Update an existing item.
+app.MapPut("/api/items/{id}", async (EFCoreContext context, int id, ItemModel updatedItem) =>
+{
+    var item = await context.Items.FindAsync(id);  // Verify if the item exists.
+    if (item is null) return Results.NotFound();
+
+    if (item.CategoryID.HasValue)
+        {
+            var category = await context.Categories.FindAsync(updatedItem.CategoryID);
+            if (category is null) return Results.BadRequest("Invalid CategoryID");
+        }
+
+    item.Name = updatedItem.Name;
+    item.Description = updatedItem.Description;
+    item.SpoilDate = updatedItem.SpoilDate;
+    item.Measure = updatedItem.Measure;
+    item.MeasureType = updatedItem.MeasureType;
+    item.CategoryID = updatedItem.CategoryID;
+
+    await context.SaveChangesAsync();
+    return Results.Ok(item); 
+});
+
+// Delete an item.
+app.MapDelete("/api/items/{id}", async (EFCoreContext context, int id) =>
+{
+    var item = await context.Items.FindAsync(id);
+    if (item is null) return Results.NotFound();
+
+    context.Items.Remove(item);
+    await context.SaveChangesAsync();
+    return Results.NoContent();
+});
+
 app.Run();
