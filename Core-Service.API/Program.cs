@@ -72,66 +72,66 @@ app.MapDelete("/api/categories/{id}", async (EFCoreContext context, int id) =>
 
 
 
-// Define the Item API CRUD routes.
-// Obtaining all items.
-app.MapGet("/api/items", async (EFCoreContext context) =>
-{
-    return await context.Items.ToListAsync();
-});
+// // Define the Item API CRUD routes.
+// // Obtaining all items.
+// app.MapGet("/api/items", async (EFCoreContext context) =>
+// {
+//     return await context.Items.ToListAsync();
+// });
 
-// Obtaining a specific item by ID.
-app.MapGet("/api/items/{id}", async (EFCoreContext context, int id) =>
-{
-    var item = await context.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.ItemID == id); // Verify if the item exists and include the related category info in the context.
-    return item is not null ? Results.Ok(item) : Results.NotFound();
-});
+// // Obtaining a specific item by ID.
+// app.MapGet("/api/items/{id}", async (EFCoreContext context, int id) =>
+// {
+//     var item = await context.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.ItemID == id); // Verify if the item exists and include the related category info in the context.
+//     return item is not null ? Results.Ok(item) : Results.NotFound();
+// });
 
-// Create a new item.
-app.MapPost("/api/items", async (EFCoreContext context, ItemModel item) =>
-{
-    if (item.CategoryID.HasValue) // Check if CategoryID is provided.
-    {
-        var category = await context.Categories.FindAsync(item.CategoryID); // Verify if the category exists.
-        if (category is null) return Results.BadRequest("Invalid CategoryID");
-    }
+// // Create a new item.
+// app.MapPost("/api/items", async (EFCoreContext context, ItemModel item) =>
+// {
+//     if (item.CategoryID.HasValue) // Check if CategoryID is provided.
+//     {
+//         var category = await context.Categories.FindAsync(item.CategoryID); // Verify if the category exists.
+//         if (category is null) return Results.BadRequest("Invalid CategoryID");
+//     }
     
-    context.Items.Add(item); // Add the new item to the context.
-    await context.SaveChangesAsync(); // Save the changes to the database.
-    return Results.Created($"/api/items/{item.ItemID}", item);
-});
+//     context.Items.Add(item); // Add the new item to the context.
+//     await context.SaveChangesAsync(); // Save the changes to the database.
+//     return Results.Created($"/api/items/{item.ItemID}", item);
+// });
 
-// Update an existing item.
-app.MapPut("/api/items/{id}", async (EFCoreContext context, int id, ItemModel updatedItem) =>
-{
-    var item = await context.Items.FindAsync(id);  // Verify if the item exists.
-    if (item is null) return Results.NotFound();
+// // Update an existing item.
+// app.MapPut("/api/items/{id}", async (EFCoreContext context, int id, ItemModel updatedItem) =>
+// {
+//     var item = await context.Items.FindAsync(id);  // Verify if the item exists.
+//     if (item is null) return Results.NotFound();
 
-    if (item.CategoryID.HasValue)
-        {
-            var category = await context.Categories.FindAsync(updatedItem.CategoryID);
-            if (category is null) return Results.BadRequest("Invalid CategoryID");
-        }
+//     if (item.CategoryID.HasValue)
+//         {
+//             var category = await context.Categories.FindAsync(updatedItem.CategoryID);
+//             if (category is null) return Results.BadRequest("Invalid CategoryID");
+//         }
 
-    item.Name = updatedItem.Name;
-    item.Description = updatedItem.Description;
-    item.SpoilDate = updatedItem.SpoilDate;
-    item.Measure = updatedItem.Measure;
-    item.MeasureType = updatedItem.MeasureType;
-    item.CategoryID = updatedItem.CategoryID;
+//     item.Name = updatedItem.Name;
+//     item.Description = updatedItem.Description;
+//     item.SpoilDate = updatedItem.SpoilDate;
+//     item.Measure = updatedItem.Measure;
+//     item.MeasureType = updatedItem.MeasureType;
+//     item.CategoryID = updatedItem.CategoryID;
 
-    await context.SaveChangesAsync();
-    return Results.Ok(item); 
-});
+//     await context.SaveChangesAsync();
+//     return Results.Ok(item); 
+// });
 
-// Delete an item.
-app.MapDelete("/api/items/{id}", async (EFCoreContext context, int id) =>
-{
-    var item = await context.Items.FindAsync(id);
-    if (item is null) return Results.NotFound();
+// // Delete an item.
+// app.MapDelete("/api/items/{id}", async (EFCoreContext context, int id) =>
+// {
+//     var item = await context.Items.FindAsync(id);
+//     if (item is null) return Results.NotFound();
 
-    context.Items.Remove(item);
-    await context.SaveChangesAsync();
-    return Results.NoContent();
-});
+//     context.Items.Remove(item);
+//     await context.SaveChangesAsync();
+//     return Results.NoContent();
+// });
 
 app.Run();

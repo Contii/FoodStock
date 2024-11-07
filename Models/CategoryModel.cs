@@ -8,19 +8,19 @@ public class CategoryModel
     [Required]
     public string Name { get; set; }
     public string? Description { get; set; }
-    public List<ItemModel>? Items { get; set; }
+    public List<StockModel>? Stocks { get; set; }
 
     public CategoryModel(int categoryID, string name, string description)
     {
         CategoryID = categoryID;
         Name = name;
         Description = description;
-        Items = new List<ItemModel>();
+        Stocks = new List<StockModel>();
     }
 
-    public CategoryModel()
+    public CategoryModel() 
     {
-        Items = new List<ItemModel>(); // A good practice For required lists, avoids null reference exceptions when adding items.
+        Stocks = new List<StockModel>(); // A good practice For required lists, avoids null reference exceptions when adding items.
         Name = string.Empty; // For required strings, a good practice to initialize them with an empty string.
     }
 

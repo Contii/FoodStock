@@ -26,22 +26,22 @@ public class EFCoreContext : DbContext
                 eb.HasKey(pk => pk.CategoryID); // CategoryID is the primary key in the database.
                 eb.Property(p => p.Name).IsRequired(); // Name is required in the database.
                 eb.Property(p => p.Description).HasMaxLength(100);
-                eb.HasMany(p => p.Items) // A category can have many items in the database.
-                    .WithOne(p => p.Category) // An item belongs to a category in the database.
-                    .HasForeignKey(p => p.CategoryID) // The foreign key of the item is the CategoryID.
-                    .OnDelete(DeleteBehavior.SetNull); // If a category is deleted, the items will have the CategoryID set to null.
+                eb.HasMany(p => p.Stocks) // A category can have many stocks in the database.
+                    // .WithOne(p => p.Category) // An stock belongs to a category in the database.
+                    //.HasForeignKey(p => p.CategoryID) // The foreign key of the stock is the CategoryID.
+                    //.OnDelete(DeleteBehavior.SetNull); // If a category is deleted, the stocks will have the CategoryID set to null.
             });
-        modelBuilder.Entity<ItemModel>( // Define the ItemModel entity.
-            eb =>
-            {
-                eb.HasKey(pk => pk.ItemID);
-                eb.Property(p => p.Name).IsRequired();
-                eb.Property(p => p.Measure).IsRequired();
-                eb.Property(p => p.MeasureType).IsRequired();
-                eb.HasOne(p => p.Category)
-                    .WithMany(p => p.Items)
-                    .HasForeignKey(p => p.CategoryID);
-            });
+        // modelBuilder.Entity<ItemModel>( // Define the ItemModel entity.
+        //     eb =>
+        //     {
+        //         eb.HasKey(pk => pk.ItemID);
+        //         eb.Property(p => p.Name).IsRequired();
+        //         eb.Property(p => p.Measure).IsRequired();
+        //         eb.Property(p => p.MeasureType).IsRequired();
+        //         eb.HasOne(p => p.Category)
+        //             .WithMany(p => p.Items)
+        //             .HasForeignKey(p => p.CategoryID);
+        //     });
 
         base.OnModelCreating(modelBuilder);
     }
