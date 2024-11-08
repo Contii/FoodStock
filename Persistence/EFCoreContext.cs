@@ -7,6 +7,7 @@ public class EFCoreContext : DbContext
 {
     public DbSet<CategoryModel>  Categories { get; set; }
     public DbSet<ItemModel> Items { get; set; }
+    public DbSet<StockModel> Stocks { get; set; }
 
     // public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
     public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
@@ -26,11 +27,26 @@ public class EFCoreContext : DbContext
                 eb.HasKey(pk => pk.CategoryID); // CategoryID is the primary key in the database.
                 eb.Property(p => p.Name).IsRequired(); // Name is required in the database.
                 eb.Property(p => p.Description).HasMaxLength(100);
-                eb.HasMany(p => p.Stocks) // A category can have many stocks in the database.
+                eb.HasMany(p => p.Stocks); // A category can have many stocks in the database.
                     // .WithOne(p => p.Category) // An stock belongs to a category in the database.
                     //.HasForeignKey(p => p.CategoryID) // The foreign key of the stock is the CategoryID.
                     //.OnDelete(DeleteBehavior.SetNull); // If a category is deleted, the stocks will have the CategoryID set to null.
             });
+        modelBuilder.Entity<StockModel>(eb =>
+        {
+            eb.HasKey(pk => pk.StockID);
+            eb.Property(p => p.Name).IsRequired();
+            eb.Property(p => p.Quantity).IsRequired();
+            eb.Property(p => p.MinQuantity).IsRequired();
+            eb.Property(p => p.MaxQuantity).IsRequired();
+            eb.HasMany(p => p.Items)
+                .WithOne();
+            eb.HasOne(p => p.Category)
+                .WithMany()
+                .HasForeignKey(p => p.CategoryID)
+                .OnDelete(DeleteBehavior.SetNull); // If a category is deleted, the stocks will have the CategoryID set to null.
+            eb.Property(p => p.MeasureType).IsRequired();
+        });
         // modelBuilder.Entity<ItemModel>( // Define the ItemModel entity.
         //     eb =>
         //     {
