@@ -72,6 +72,92 @@ app.MapDelete("/api/categories/{id}", async (EFCoreContext context, int id) =>
 
 
 
+// Define the Stock API CRUD routes.
+// Obtaining all stocks.
+app.MapGet("/api/stocks", async (EFCoreContext context) =>
+{
+    return await context.Stocks.Include(s => s.Category).Include(s => s.Items).ToListAsync();
+});
+
+// Obtaining a specific stock by ID.
+app.MapGet("/api/stocks/{id}", async (EFCoreContext context, int id) =>
+{
+    var stock = await context.Stocks.Include(s => s.Category).Include(s => s.Items).FirstOrDefaultAsync(s => s.StockID == id); // Verify if the stock exists and include related category and items.
+    return stock is not null ? Results.Ok(stock) : Results.NotFound();
+});
+
+// Create a new stock.
+app.MapPost("/api/stocks", async (EFCoreContext context, StockModel stock) =>
+{
+    if (stock.CategoryID.HasValue)
+    {
+        var category = await context.Categories.FindAsync(stock.CategoryID); // Verify if the category exists.
+        if (category is null) return Results.BadRequest("Invalid CategoryID");
+    }
+
+    if (stock.Items.Count > 0)
+    {
+        foreach (var item in stock.Items)
+        {
+            var itemExists = await context.Items.FindAsync(item.ItemID); // Verify if the item exists.
+            if (itemExists is null) return Results.BadRequest("Invalid ItemID");
+        }
+    }
+
+    context.Stocks.Add(stock); // Add the new stock to the context.
+    await context.SaveChangesAsync(); // Save the changes to the database.
+    return Results.Created($"/api/stocks/{stock.StockID}", stock);
+});
+
+// Update an existing stock.
+app.MapPut("/api/stocks/{id}", async (EFCoreContext context, int id, StockModel updatedStock) =>
+{
+    var stock = await context.Stocks.Include(s => s.Category).Include(s => s.Items).FirstOrDefaultAsync(s => s.StockID == id); // Verify if the stock exists.
+    if (stock is null) return Results.NotFound();
+
+    if (updatedStock.CategoryID.HasValue)
+    {
+        var category = await context.Categories.FindAsync(updatedStock.CategoryID); // Verify if the category exists.
+        if (category is null) return Results.BadRequest("Invalid CategoryID");
+    }
+
+    if (updatedStock.Items.Count > 0)
+    {
+        foreach (var item in updatedStock.Items)
+        {
+            var itemExists = await context.Items.FindAsync(item.ItemID); // Verify if the item exists.
+            if (itemExists is null) return Results.BadRequest("Invalid ItemID");
+        }
+    }
+
+    stock.Name = updatedStock.Name;
+    stock.Description = updatedStock.Description;
+    stock.Quantity = updatedStock.Quantity;
+    stock.MinQuantity = updatedStock.MinQuantity;
+    stock.MaxQuantity = updatedStock.MaxQuantity;
+    stock.Items = updatedStock.Items;
+    stock.CategoryID = updatedStock.CategoryID;
+    stock.Category = updatedStock.Category;
+    stock.MeasureType = updatedStock.MeasureType;
+
+    await context.SaveChangesAsync();
+    return Results.Ok(stock);
+});
+
+// Delete a stock.
+app.MapDelete("/api/stocks/{id}", async (EFCoreContext context, int id) =>
+{
+    var stock = await context.Stocks.FindAsync(id);
+    if (stock is null) return Results.NotFound();
+
+    context.Stocks.Remove(stock);
+    await context.SaveChangesAsync();
+    return Results.NoContent();
+});
+
+
+
+
 // // Define the Item API CRUD routes.
 // // Obtaining all items.
 // app.MapGet("/api/items", async (EFCoreContext context) =>
