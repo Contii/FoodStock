@@ -156,8 +156,6 @@ app.MapDelete("/api/stocks/{id}", async (EFCoreContext context, int id) =>
 });
 
 
-
-
 // // Define the Item API CRUD routes.
 // // Obtaining all items.
 // app.MapGet("/api/items", async (EFCoreContext context) =>
