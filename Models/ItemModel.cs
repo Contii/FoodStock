@@ -5,46 +5,42 @@ namespace FoodStock.Models;
 public class ItemModel
 {
     public int ItemID { get; set; }
+
     [Required]
-    public string Name { get; set; }
+    public StockModel Stock { get; set; } // Reference to StockModel
+
     [MaxLength(100)]
-    public string? Description { get; set; }
+    public string? ItemDescription { get; set; }
+
     public DateTime? SpoilDate { get; set; }
+
     [Required]
     public float Measure { get; set; }
-    [Required] 
-    [EnumDataType(typeof(MeasureTypeEnum))]
-    public MeasureTypeEnum MeasureType { get; set; }
-    public int? CategoryID { get; set; }
-    public CategoryModel? Category { get; set; }
 
-    public ItemModel(int itemID, string name, string description, DateTime spoilDate, float measure, MeasureTypeEnum measureType, int categoryID)
+    public ItemModel(int itemID, StockModel stock, string itemDescription, DateTime? spoilDate, float measure)
     {
         ItemID = itemID;
-        Name = name;
-        Description = description;
+        Stock = stock;
+        ItemDescription = itemDescription;
         SpoilDate = spoilDate;
         Measure = measure;
-        MeasureType = measureType;
-        CategoryID = categoryID;
-        Category = new CategoryModel();
     }
 
     public ItemModel()
     {
-        Name = string.Empty;
+        Stock = new StockModel(); // Initialize with a default value
     }
 
     public override string ToString()
     {
-        return $"[{ItemID}, {Name}, {Description}, {SpoilDate}, {Measure}, {MeasureType}, {CategoryID}]";
+        return $"[{ItemID}, {ItemDescription}, {SpoilDate}, {Measure}, {Stock.Name}, {Stock.Description}, {Stock.MeasureType}]";
     }
 
     public override bool Equals(object? obj)
     {
         if (obj is ItemModel other)
         {
-            return other.ItemID == ItemID;
+            return ItemID == other.ItemID;
         }
 
         return false;
