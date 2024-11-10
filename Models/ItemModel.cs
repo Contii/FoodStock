@@ -6,9 +6,6 @@ public class ItemModel
 {
     public int ItemID { get; set; }
 
-    [Required]
-    public StockModel Stock { get; set; } // Reference to StockModel
-
     [MaxLength(100)]
     public string? ItemDescription { get; set; }
 
@@ -17,10 +14,17 @@ public class ItemModel
     [Required]
     public float Measure { get; set; }
 
+    [Required]
+    public StockModel Stock { get; set; } // Reference to StockModel
+
+    [Required]
+    public int StockID { get; set; } // Foreign key to StockModel
+
     public ItemModel(int itemID, StockModel stock, string itemDescription, DateTime? spoilDate, float measure)
     {
         ItemID = itemID;
         Stock = stock;
+        StockID = stock.StockID;
         ItemDescription = itemDescription;
         SpoilDate = spoilDate;
         Measure = measure;
@@ -29,6 +33,7 @@ public class ItemModel
     public ItemModel()
     {
         Stock = new StockModel(); // Initialize with a default value
+        StockID = Stock.StockID; // Ensure StockID is set correctly
     }
 
     public override string ToString()

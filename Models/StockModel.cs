@@ -9,6 +9,7 @@ public class StockModel
     [Required]
     public string Name { get; set; } = string.Empty;
 
+    [MaxLength(100)]
     public string? Description { get; set; }
 
     [Required]
@@ -20,14 +21,15 @@ public class StockModel
     [Required]
     public int MaxQuantity { get; set; }
 
-    public List<ItemModel> Items { get; set; } = new List<ItemModel>();
-    public int? CategoryID { get; set; }
-
-    public CategoryModel? Category { get; set; } = new CategoryModel();
-
     [Required]
     [EnumDataType(typeof(MeasureTypeEnum))]
     public MeasureTypeEnum MeasureType { get; set; }
+
+    public List<ItemModel> Items { get; set; } = new List<ItemModel>();
+
+    public int? CategoryID { get; set; }
+    
+    public CategoryModel? Category { get; set; } = new CategoryModel();
 
     public StockModel(int stockID, string name, string description, float quantity, int minQuantity, int maxQuantity, List<ItemModel> items, int categoryID, CategoryModel category, MeasureTypeEnum measureType)
     {
