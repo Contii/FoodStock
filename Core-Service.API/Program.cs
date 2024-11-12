@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization();
 
 // Configure the DbContext with SQLite (?? means default connection string).
 builder.Services.AddDbContext<EFCoreContext>(options =>
@@ -25,7 +26,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization(); // Auth Middleware, not used in this project but good for future security implementations.
 
 
-    
+
 
 // Define the Category API CRUD routes.
 // Obtaining all categories.
