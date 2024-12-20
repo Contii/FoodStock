@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
+builder.Services.AddControllers();
 
 // Configure the DbContext with SQLite (?? means default connection string).
 builder.Services.AddDbContext<EFCoreContext>(options =>
@@ -24,55 +25,54 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization(); // Auth Middleware, not used in this project but good for future security implementations.
+app.MapControllers();
 
 
+// // Define the Category API CRUD routes.
+// // Obtaining all categories.
+// app.MapGet("/api/categories", async (EFCoreContext context) =>
+// {
+//     return await context.Categories.ToListAsync();
+// });
 
+// // Obtaining a specific category by ID.
+// app.MapGet("/api/categories/{id}", async (EFCoreContext context, int id) =>
+// {
+//     var category = await context.Categories.FindAsync(id); // Verify if the category exists.
+//     return category is not null ? Results.Ok(category) : Results.NotFound();
+// });
 
-// Define the Category API CRUD routes.
-// Obtaining all categories.
-app.MapGet("/api/categories", async (EFCoreContext context) =>
-{
-    return await context.Categories.ToListAsync();
-});
+// // Create a new category.
+// app.MapPost("/api/categories", async (EFCoreContext context, CategoryModel category) =>
+// {
+//     context.Categories.Add(category); // Add the new category to the context.
+//     await context.SaveChangesAsync(); // Save the changes to the database.
+//     return Results.Created($"/api/categories/{category.CategoryID}", category);
+// });
 
-// Obtaining a specific category by ID.
-app.MapGet("/api/categories/{id}", async (EFCoreContext context, int id) =>
-{
-    var category = await context.Categories.FindAsync(id); // Verify if the category exists.
-    return category is not null ? Results.Ok(category) : Results.NotFound();
-});
+// // Update an existing category.
+// app.MapPut("/api/categories/{id}", async (EFCoreContext context, int id, CategoryModel updatedCategory) =>
+// {
+//     var category = await context.Categories.FindAsync(id); 
+//     if (category is null) return Results.NotFound(); 
 
-// Create a new category.
-app.MapPost("/api/categories", async (EFCoreContext context, CategoryModel category) =>
-{
-    context.Categories.Add(category); // Add the new category to the context.
-    await context.SaveChangesAsync(); // Save the changes to the database.
-    return Results.Created($"/api/categories/{category.CategoryID}", category);
-});
+//     category.Name = updatedCategory.Name;
+//     category.Description = updatedCategory.Description;
 
-// Update an existing category.
-app.MapPut("/api/categories/{id}", async (EFCoreContext context, int id, CategoryModel updatedCategory) =>
-{
-    var category = await context.Categories.FindAsync(id); 
-    if (category is null) return Results.NotFound(); 
+//     await context.SaveChangesAsync();
+//     return Results.Ok(category); 
+// });
 
-    category.Name = updatedCategory.Name;
-    category.Description = updatedCategory.Description;
+// // Delete a category.
+// app.MapDelete("/api/categories/{id}", async (EFCoreContext context, int id) =>
+// {
+//     var category = await context.Categories.FindAsync(id);
+//     if (category is null) return Results.NotFound();
 
-    await context.SaveChangesAsync();
-    return Results.Ok(category); 
-});
-
-// Delete a category.
-app.MapDelete("/api/categories/{id}", async (EFCoreContext context, int id) =>
-{
-    var category = await context.Categories.FindAsync(id);
-    if (category is null) return Results.NotFound();
-
-    context.Categories.Remove(category);
-    await context.SaveChangesAsync();
-    return Results.NoContent();
-});
+//     context.Categories.Remove(category);
+//     await context.SaveChangesAsync();
+//     return Results.NoContent();
+// });
 
 
 
