@@ -59,6 +59,8 @@ namespace FoodStock.Core_Service.API.Controllers
             {
                 var category = await _context.Categories.FindAsync(updatedStock.CategoryID.Value); // Verify if the category exists.
                 if (category == null) return BadRequest("Invalid CategoryID"); // Return a 400 if the category does not exist.
+                stock.CategoryID = updatedStock.CategoryID;
+                stock.Category = updatedStock.Category;
             }
 
             stock.Name = updatedStock.Name;
@@ -66,8 +68,6 @@ namespace FoodStock.Core_Service.API.Controllers
             stock.Quantity = updatedStock.Quantity;
             stock.MinQuantity = updatedStock.MinQuantity;
             stock.MaxQuantity = updatedStock.MaxQuantity;
-            stock.CategoryID = updatedStock.CategoryID;
-            stock.Category = updatedStock.Category;
             stock.MeasureType = updatedStock.MeasureType;
 
             await _context.SaveChangesAsync(); // Save the changes to the database.
