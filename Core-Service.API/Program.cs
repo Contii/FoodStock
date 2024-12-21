@@ -160,60 +160,60 @@ app.MapControllers();
 // });
 
 
-// Define the Item API CRUD routes.
-// Obtaining all items.
-app.MapGet("/api/items", async (EFCoreContext context) =>
-{
-    return await context.Items.Include(i => i.Stock).ToListAsync();
-});
+// // Define the Item API CRUD routes.
+// // Obtaining all items.
+// app.MapGet("/api/items", async (EFCoreContext context) =>
+// {
+//     return await context.Items.Include(i => i.Stock).ToListAsync();
+// });
 
-// Obtaining a specific item by ID.
-app.MapGet("/api/items/{id}", async (EFCoreContext context, int id) =>
-{
-    var item = await context.Items.Include(i => i.Stock).FirstOrDefaultAsync(i => i.ItemID == id); // Verify if the item exists and include the related stock info in the context.
-    return item is not null ? Results.Ok(item) : Results.NotFound();
-});
+// // Obtaining a specific item by ID.
+// app.MapGet("/api/items/{id}", async (EFCoreContext context, int id) =>
+// {
+//     var item = await context.Items.Include(i => i.Stock).FirstOrDefaultAsync(i => i.ItemID == id); // Verify if the item exists and include the related stock info in the context.
+//     return item is not null ? Results.Ok(item) : Results.NotFound();
+// });
 
-// Create a new item.
-app.MapPost("/api/items", async (EFCoreContext context, ItemModel item) =>
-{
-    var stock = await context.Stocks.FindAsync(item.StockID); // Verify if the stock exists.
-    if (stock is null) return Results.BadRequest("Invalid StockID");
+// // Create a new item.
+// app.MapPost("/api/items", async (EFCoreContext context, ItemModel item) =>
+// {
+//     var stock = await context.Stocks.FindAsync(item.StockID); // Verify if the stock exists.
+//     if (stock is null) return Results.BadRequest("Invalid StockID");
 
-    item.Stock = stock; // Associate the item with the stock.
-    context.Items.Add(item); // Add the new item to the context.
-    await context.SaveChangesAsync(); // Save the changes to the database.
-    return Results.Created($"/api/items/{item.ItemID}", item);
-});
+//     item.Stock = stock; // Associate the item with the stock.
+//     context.Items.Add(item); // Add the new item to the context.
+//     await context.SaveChangesAsync(); // Save the changes to the database.
+//     return Results.Created($"/api/items/{item.ItemID}", item);
+// });
 
-// Update an existing item.
-app.MapPut("/api/items/{id}", async (EFCoreContext context, int id, ItemModel updatedItem) =>
-{
-    var item = await context.Items.Include(i => i.Stock).FirstOrDefaultAsync(i => i.ItemID == id); // Verify if the item exists.
-    if (item is null) return Results.NotFound();
+// // Update an existing item.
+// app.MapPut("/api/items/{id}", async (EFCoreContext context, int id, ItemModel updatedItem) =>
+// {
+//     var item = await context.Items.Include(i => i.Stock).FirstOrDefaultAsync(i => i.ItemID == id); // Verify if the item exists.
+//     if (item is null) return Results.NotFound();
 
-    var stock = await context.Stocks.FindAsync(updatedItem.StockID); // Verify if the stock exists.
-    if (stock is null) return Results.BadRequest("Invalid StockID");
+//     var stock = await context.Stocks.FindAsync(updatedItem.StockID); // Verify if the stock exists.
+//     if (stock is null) return Results.BadRequest("Invalid StockID");
 
-    item.ItemDescription = updatedItem.ItemDescription;
-    item.SpoilDate = updatedItem.SpoilDate;
-    item.Measure = updatedItem.Measure;
-    item.StockID = updatedItem.StockID;
-    item.Stock = stock; // Associate the item with the stock.
+//     item.ItemDescription = updatedItem.ItemDescription;
+//     item.SpoilDate = updatedItem.SpoilDate;
+//     item.Measure = updatedItem.Measure;
+//     item.StockID = updatedItem.StockID;
+//     item.Stock = stock; // Associate the item with the stock.
 
-    await context.SaveChangesAsync();
-    return Results.Ok(item);
-});
+//     await context.SaveChangesAsync();
+//     return Results.Ok(item);
+// });
 
-// Delete an item.
-app.MapDelete("/api/items/{id}", async (EFCoreContext context, int id) =>
-{
-    var item = await context.Items.FindAsync(id);
-    if (item is null) return Results.NotFound();
+// // Delete an item.
+// app.MapDelete("/api/items/{id}", async (EFCoreContext context, int id) =>
+// {
+//     var item = await context.Items.FindAsync(id);
+//     if (item is null) return Results.NotFound();
 
-    context.Items.Remove(item);
-    await context.SaveChangesAsync();
-    return Results.NoContent();
-});
+//     context.Items.Remove(item);
+//     await context.SaveChangesAsync();
+//     return Results.NoContent();
+// });
 
 app.Run();
