@@ -34,31 +34,41 @@ namespace FoodStock.Core_Service.API.Controllers
 
         // Create a new stock.
         [HttpPost]
-        public async Task<IActionResult> CreateStock(StockModel stock)
+        public async Task<IActionResult> CreateStock([FromBody] StockModel stock)
         {
+            if (!ModelState.IsValid) // Verify if the model is valid.
+            {
+                return BadRequest(ModelState);
+            }
+
             if (stock.CategoryID.HasValue) // Verify if the stock has a value for category.
             {
                 var category = await _context.Categories.FindAsync(stock.CategoryID.Value); // Verify if the category exists.
-                if (category == null) return BadRequest("Invalid CategoryID"); // Return a 400 if the category does not exist.
+                if (category == null) return BadRequest("Invalid CategoryID");
             }
 
             stock.Items = new List<ItemModel>(); // Ensure the Items list is initialized as empty
             _context.Stocks.Add(stock); // Add the new stock to the context.
             await _context.SaveChangesAsync(); // Save the changes to the database.
-            return CreatedAtAction(nameof(GetStock), new { id = stock.StockID }, stock); // Return the created stock.
+            return CreatedAtAction(nameof(GetStock), new { id = stock.StockID }, stock);
         }
 
         // Update an existing stock.
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStock(int id, StockModel updatedStock)
+        public async Task<IActionResult> UpdateStock(int id, [FromBody] StockModel updatedStock)
         {
-            var stock = await _context.Stocks.Include(s => s.Category).Include(s => s.Items).FirstOrDefaultAsync(s => s.StockID == id); // Verify if the stock exists.
-            if (stock == null) return NotFound(); // Return a 404 if the stock does not exist.
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            if (updatedStock.CategoryID.HasValue) // Verify if the updated stock has a value for category.
+            var stock = await _context.Stocks.Include(s => s.Category).Include(s => s.Items).FirstOrDefaultAsync(s => s.StockID == id); // Verify if the stock exists.
+            if (stock == null) return NotFound();
+
+            if (updatedStock.CategoryID.HasValue)
             {
                 var category = await _context.Categories.FindAsync(updatedStock.CategoryID.Value); // Verify if the category exists.
-                if (category == null) return BadRequest("Invalid CategoryID"); // Return a 400 if the category does not exist.
+                if (category == null) return BadRequest("Invalid CategoryID");
                 stock.CategoryID = updatedStock.CategoryID;
                 stock.Category = updatedStock.Category;
             }
@@ -70,8 +80,8 @@ namespace FoodStock.Core_Service.API.Controllers
             stock.MaxQuantity = updatedStock.MaxQuantity;
             stock.MeasureType = updatedStock.MeasureType;
 
-            await _context.SaveChangesAsync(); // Save the changes to the database.
-            return Ok(stock); // Return the updated stock.
+            await _context.SaveChangesAsync();
+            return Ok(stock);
         }
 
         // Delete a stock.
@@ -79,11 +89,11 @@ namespace FoodStock.Core_Service.API.Controllers
         public async Task<IActionResult> DeleteStock(int id)
         {
             var stock = await _context.Stocks.FindAsync(id); // Verify if the stock exists.
-            if (stock == null) return NotFound(); // Return a 404 if the stock does not exist.
+            if (stock == null) return NotFound();
 
             _context.Stocks.Remove(stock); // Remove the stock from the context.
-            await _context.SaveChangesAsync(); // Save the changes to the database.
-            return NoContent(); // Return a 204.
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

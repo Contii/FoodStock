@@ -33,25 +33,35 @@ namespace FoodStock.Core_Service.API.Controllers
 
         // Create a new category.
         [HttpPost]
-        public async Task<IActionResult> CreateCategory(CategoryModel category)
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryModel category)
         {
+            if (!ModelState.IsValid) // Verify if the model is valid.
+            {
+                return BadRequest(ModelState);
+            }
+
             _context.Categories.Add(category); // Add the new category to the context.
             await _context.SaveChangesAsync(); // Save the changes to the database.
-            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryID }, category); // Return the created category.
+            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryID }, category);
         }
 
         // Update an existing category.
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(int id, CategoryModel updatedCategory)
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryModel updatedCategory)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var category = await _context.Categories.FindAsync(id); // Verify if the category exists.
-            if (category == null) return NotFound(); // Return a 404 if the category does not exist.
+            if (category == null) return NotFound();
 
-            category.Name = updatedCategory.Name; // Update the category name.
-            category.Description = updatedCategory.Description; // Update the category description.
+            category.Name = updatedCategory.Name;
+            category.Description = updatedCategory.Description;
 
-            await _context.SaveChangesAsync(); // Save the changes to the database.
-            return Ok(category); // Return the updated category.
+            await _context.SaveChangesAsync(); 
+            return Ok(category);
         }
 
         // Delete a category.
@@ -59,11 +69,11 @@ namespace FoodStock.Core_Service.API.Controllers
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _context.Categories.FindAsync(id); // Verify if the category exists.
-            if (category == null) return NotFound(); // Return a 404 if the category does not exist.
+            if (category == null) return NotFound();
 
             _context.Categories.Remove(category); // Remove the category from the context.
-            await _context.SaveChangesAsync(); // Save the changes to the database.
-            return NoContent(); // Return a 204.
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

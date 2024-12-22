@@ -33,25 +33,35 @@ namespace FoodStock.Core_Service.API.Controllers
 
         // Create a new item.
         [HttpPost]
-        public async Task<IActionResult> CreateItem(ItemModel item)
+        public async Task<IActionResult> CreateItem([FromBody] ItemModel item)
         {
+            if (!ModelState.IsValid) // Verify if the model is valid.
+            {
+                return BadRequest(ModelState);
+            }
+
             var stock = await _context.Stocks.FindAsync(item.StockID); // Verify if the stock exists.
-            if (stock == null) return BadRequest("Invalid StockID"); // Return a 400 if the stock does not exist.
+            if (stock == null) return BadRequest("Invalid StockID");
 
             _context.Items.Add(item); // Add the new item to the context.
             await _context.SaveChangesAsync(); // Save the changes to the database.
-            return CreatedAtAction(nameof(GetItem), new { id = item.ItemID }, item); // Return the created item.
+            return CreatedAtAction(nameof(GetItem), new { id = item.ItemID }, item);
         }
 
         // Update an existing item.
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateItem(int id, ItemModel updatedItem)
+        public async Task<IActionResult> UpdateItem(int id, [FromBody] ItemModel updatedItem)
         {
-            var item = await _context.Items.Include(i => i.Stock).FirstOrDefaultAsync(i => i.ItemID == id); // Verify if the item exists, including the related stock.
-            if (item == null) return NotFound(); // Return a 404 if the item does not exist.
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            var stock = await _context.Stocks.FindAsync(updatedItem.StockID); // Verify if the new stock exists.
-            if (stock == null) return BadRequest("Invalid StockID"); // Return a 400 if the stock does not exist.
+            var item = await _context.Items.Include(i => i.Stock).FirstOrDefaultAsync(i => i.ItemID == id); // Verify if the item exists.
+            if (item == null) return NotFound();
+
+            var stock = await _context.Stocks.FindAsync(updatedItem.StockID); // Verify if the stock exists.
+            if (stock == null) return BadRequest("Invalid StockID");
 
             item.ItemDescription = updatedItem.ItemDescription;
             item.SpoilDate = updatedItem.SpoilDate;
@@ -59,8 +69,8 @@ namespace FoodStock.Core_Service.API.Controllers
             item.StockID = updatedItem.StockID;
             item.Stock = updatedItem.Stock;
 
-            await _context.SaveChangesAsync(); // Save the changes to the database.
-            return Ok(item); // Return the updated item.
+            await _context.SaveChangesAsync();
+            return Ok(item);
         }
 
         // Delete an item.
@@ -68,11 +78,11 @@ namespace FoodStock.Core_Service.API.Controllers
         public async Task<IActionResult> DeleteItem(int id)
         {
             var item = await _context.Items.FindAsync(id); // Verify if the item exists.
-            if (item == null) return NotFound(); // Return a 404 if the item does not exist.
+            if (item == null) return NotFound();
 
             _context.Items.Remove(item); // Remove the item from the context.
-            await _context.SaveChangesAsync(); // Save the changes to the database.
-            return NoContent(); // Return a 204.
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
