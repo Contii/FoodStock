@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FoodStock.Models;
 
@@ -24,11 +25,11 @@ public class StockModel
     [Required]
     [EnumDataType(typeof(MeasureTypeEnum))]
     public MeasureTypeEnum MeasureType { get; set; }
-
+    [JsonIgnore]
     public List<ItemModel> Items { get; set; } = new List<ItemModel>();
 
     public int? CategoryID { get; set; }
-    
+
     public CategoryModel? Category { get; set; } = new CategoryModel();
 
     public StockModel(int stockID, string name, string description, float quantity, int minQuantity, int maxQuantity, List<ItemModel> items, int categoryID, CategoryModel category, MeasureTypeEnum measureType)

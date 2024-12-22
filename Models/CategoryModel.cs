@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FoodStock.Models;
 
@@ -8,6 +9,7 @@ public class CategoryModel
     [Required]
     public string Name { get; set; }
     public string? Description { get; set; }
+    [JsonIgnore]
     public List<StockModel>? Stocks { get; set; }
 
     public CategoryModel(int categoryID, string name, string description)
