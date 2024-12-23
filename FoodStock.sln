@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{8982A9CC-713F-4CCE-B6EF-B9201E8CF214}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Category.API", "Category.API\Category.API.csproj", "{26FC2B4B-2825-4390-8DE6-E545C2AFC275}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core-Service.API", "Core-Service.API\Core-Service.API.csproj", "{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,9 +26,9 @@ Global
 		{8982A9CC-713F-4CCE-B6EF-B9201E8CF214}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8982A9CC-713F-4CCE-B6EF-B9201E8CF214}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8982A9CC-713F-4CCE-B6EF-B9201E8CF214}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26FC2B4B-2825-4390-8DE6-E545C2AFC275}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26FC2B4B-2825-4390-8DE6-E545C2AFC275}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26FC2B4B-2825-4390-8DE6-E545C2AFC275}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26FC2B4B-2825-4390-8DE6-E545C2AFC275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
