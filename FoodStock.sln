@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core-Service.API", "Core-Service.API\Core-Service.API.csproj", "{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core-Service.UI", "Core-Service.UI\Core-Service.UI.csproj", "{9BD79F3D-C363-4506-A543-10712631E5C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E4621E1-70A6-4667-ABBA-C20D7A6F12EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BD79F3D-C363-4506-A543-10712631E5C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BD79F3D-C363-4506-A543-10712631E5C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BD79F3D-C363-4506-A543-10712631E5C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BD79F3D-C363-4506-A543-10712631E5C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
