@@ -1,5 +1,6 @@
 using FoodStock.Models;
 using FoodStock.Persistence;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace FoodStock.Core_Service.API.Controllers
 {
     [ApiController] // Activates the class in an API controller design.
     [Route("api/[controller]")] // The route will be the controller name, supressing "Controller" from it.
+    [EnableCors("AllowAll")] // Enable CORS for the controller.
     public class CategoryController : ControllerBase
     {
         private readonly EFCoreContext _context; // The context is used to interact with the database.
