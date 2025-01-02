@@ -3,9 +3,14 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Core_Service.UI;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+// Add the root component to the app. This is the main component that will be rendered in the HTML element with id "app".
 builder.RootComponents.Add<App>("#app");
+
+// Add the HeadOutlet component to the app. This component allows for dynamic updates to the <head> element of the HTML document.
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+// Register the HttpClient service with a base address for dependency injection. This HttpClient will be used to make HTTP requests to the API.
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5262") });
 
 await builder.Build().RunAsync();
