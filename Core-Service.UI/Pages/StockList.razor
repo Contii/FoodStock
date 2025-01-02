@@ -1,0 +1,29 @@
+@page "/stocks"
+@using FoodStock.Models
+@inject StockService StockService
+
+<h3>Stocks</h3>
+
+@if (stocks == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var stock in stocks)
+        {
+            <li>@stock.Name</li>
+        }
+    </ul>
+}
+
+@code {
+    private List<StockModel> stocks;
+
+    // Fetch stocks when the component is initialized
+    protected override async Task OnInitializedAsync()
+    {
+        stocks = await StockService.GetStocksAsync();
+    }
+}
