@@ -1,29 +1,72 @@
-@page "/stocks"
+@page "/stock"
 @using FoodStock.Models
 @inject StockService StockService
+@inject CategoryService CategoryService
+@inject ItemService ItemService
+@inject NavigationManager NavigationManager
 
-<h3>Stocks</h3>
-
-@if (stocks == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <ul>
-        @foreach (var stock in stocks)
+<div class="stocklist-container">
+    <div class="stocklist-button-container">
+        <button @onclick="NavigateToStocks">
+            <i class="fas fa-boxes"></i>
+            <div>Stocks</div>
+        </button>
+        <button @onclick="NavigateToCategories">
+            <i class="fas fa-tags"></i>
+            <div>Categories</div>
+        </button>
+        <button @onclick="NavigateToItems">
+            <i class="fas fa-box"></i>
+            <div>Items</div>
+        </button>
+    </div>
+    <div class="stocklist-main-section">
+        <h4>Stocks</h4>
+        @if (stocks == null)
         {
-            <li>@stock.Name</li>
+            <p>Loading...</p>
         }
-    </ul>
-}
+        else
+        {
+            <ul>
+                @foreach (var stock in stocks)
+                {
+                    <li>
+                        <strong>Name:</strong> @stock.Name <br />
+                        <strong>Quantity:</strong> @stock.Quantity <br />
+                        <!-- Add other properties as needed -->
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
 
 @code {
     private List<StockModel>? stocks;
+    private List<CategoryModel>? categories;
+    private List<ItemModel>? items;
 
-    // Fetch stocks when the component is initialized
+    // Fetch data when the component is initialized
     protected override async Task OnInitializedAsync()
     {
         stocks = await StockService.GetStocksAsync();
+        categories = await CategoryService.GetCategoriesAsync();
+        items = await ItemService.GetItemsAsync();
+    }
+
+    private void NavigateToStocks()
+    {
+        NavigationManager.NavigateTo("/stocks");
+    }
+
+    private void NavigateToCategories()
+    {
+        NavigationManager.NavigateTo("/categories");
+    }
+
+    private void NavigateToItems()
+    {
+        NavigationManager.NavigateTo("/items");
     }
 }

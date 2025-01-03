@@ -8,9 +8,14 @@ main {
     flex: 1;
 }
 
-.sidebar {
+.sidebar-new {
+    width: 180px;
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
 }
+.sidebar {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+} /* cant change effects of this css, its a known problem. */
+
 
 .top-row {
     background-color: #f7f7f7;

@@ -2,6 +2,45 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-button-container">
+    <button @onclick="NavigateToCategory">
+        <i class="fas fa-list"></i>
+        <div>Category</div>
+    </button>
+    <button @onclick="NavigateToStock">
+        <i class="fas fa-boxes"></i>
+        <div>Stock</div>
+    </button>
+    <button @onclick="NavigateToItem">
+        <i class="fas fa-box"></i>
+        <div>Item</div>
+    </button>
+    <button @onclick="NavigateToMisc">
+        <i class="fas fa-ellipsis-h"></i>
+        <div>Misc</div>
+    </button>
+</div>
 
-Welcome to your new app.
+@inject NavigationManager NavigationManager
+
+@code {
+    private void NavigateToCategory()
+    {
+        NavigationManager.NavigateTo("/category");
+    }
+
+    private void NavigateToStock()
+    {
+        NavigationManager.NavigateTo("/stock");
+    }
+
+    private void NavigateToItem()
+    {
+        NavigationManager.NavigateTo("/item");
+    }
+
+    private void NavigateToMisc()
+    {
+        NavigationManager.NavigateTo("/misc");
+    }
+}
