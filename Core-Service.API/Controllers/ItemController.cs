@@ -43,6 +43,10 @@ namespace FoodStock.Core_Service.API.Controllers
             var stock = await _context.Stocks.FindAsync(item.StockID); // Verify if the stock exists.
             if (stock == null) return BadRequest("Invalid StockID");
 
+            // Detach the existing stock to avoid tracking conflicts
+            _context.Entry(stock).State = EntityState.Detached;
+            item.Stock = null; // Set the stock to null to avoid re-adding it
+
             _context.Items.Add(item); // Add the new item to the context.
             await _context.SaveChangesAsync(); // Save the changes to the database.
             return CreatedAtAction(nameof(GetItem), new { id = item.ItemID }, item);
@@ -62,6 +66,10 @@ namespace FoodStock.Core_Service.API.Controllers
 
             var stock = await _context.Stocks.FindAsync(updatedItem.StockID); // Verify if the stock exists.
             if (stock == null) return BadRequest("Invalid StockID");
+
+            // Detach the existing stock to avoid tracking conflicts
+            _context.Entry(stock).State = EntityState.Detached;
+            item.Stock = null; // Set the stock to null to avoid re-adding it
 
             item.ItemDescription = updatedItem.ItemDescription;
             item.SpoilDate = updatedItem.SpoilDate;

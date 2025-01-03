@@ -45,6 +45,10 @@ namespace FoodStock.Core_Service.API.Controllers
             {
                 var category = await _context.Categories.FindAsync(stock.CategoryID.Value); // Verify if the category exists.
                 if (category == null) return BadRequest("Invalid CategoryID");
+
+                // Detach the existing category to avoid tracking conflicts
+                _context.Entry(category).State = EntityState.Detached;
+                stock.Category = null; // Set the category to null to avoid re-adding it
             }
 
             stock.Items = new List<ItemModel>(); // Ensure the Items list is initialized as empty
@@ -69,6 +73,11 @@ namespace FoodStock.Core_Service.API.Controllers
             {
                 var category = await _context.Categories.FindAsync(updatedStock.CategoryID.Value); // Verify if the category exists.
                 if (category == null) return BadRequest("Invalid CategoryID");
+
+                // Detach the existing category to avoid tracking conflicts
+                _context.Entry(category).State = EntityState.Detached;
+                stock.Category = null; // Set the category to null to avoid re-adding it
+
                 stock.CategoryID = updatedStock.CategoryID;
                 stock.Category = updatedStock.Category;
             }
