@@ -7,38 +7,244 @@
 
 <div class="stocklist-container">
     <div class="stocklist-button-container">
-        <button @onclick="NavigateToStocks">
-            <i class="fas fa-boxes"></i>
-            <div>Stocks</div>
-        </button>
-        <button @onclick="NavigateToCategories">
-            <i class="fas fa-tags"></i>
-            <div>Categories</div>
-        </button>
-        <button @onclick="NavigateToItems">
+        <button @onclick="() => ShowSection(Section.Items)">
             <i class="fas fa-box"></i>
             <div>Items</div>
         </button>
+        <button @onclick="() => ShowSection(Section.Stocks)">
+            <i class="fas fa-boxes"></i>
+            <div>Stocks</div>
+        </button>
+        <button @onclick="() => ShowSection(Section.Categories)">
+            <i class="fas fa-tags"></i>
+            <div>Categories</div>
+        </button>
     </div>
+
     <div class="stocklist-main-section">
-        <h4>Stocks</h4>
-        @if (stocks == null)
+
+
+
+        <div class="stocklist-header-section">
+            <div class="column">
+                <h4>@selectedSection.ToString()</h4>
+                <button class="btn-create" @onclick="CreateItem">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <div class="column" style="display: flex; justify-content: flex-end;">
+                <input type="text" class="search-input" placeholder="Search by id..." @bind="searchId"/>
+                <button class="btn-search" @onclick="SearchItem">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+
+
+        @if (selectedSection == Section.Stocks)
         {
-            <p>Loading...</p>
-        }
-        else
-        {
-            <ul>
-                @foreach (var stock in stocks)
+            @if (isSearching)
+            {
+                @if (searchedStock == null)
                 {
-                    <li>
-                        <strong>Name:</strong> @stock.Name <br />
-                        <strong>Quantity:</strong> @stock.Quantity <br />
-                        <!-- Add other properties as needed -->
-                    </li>
+                    <p>No stock found with ID @searchId</p>
                 }
-            </ul>
+                else
+                {
+                    <div class="stocklist-item">
+                        <div class="column">
+                            <strong>Name:</strong> @searchedStock.Name<br/>
+                            <strong>Description:</strong> @searchedStock.Description<br/>
+                            <strong>Category:</strong> @searchedStock.Category.Name <br/>
+                        </div>
+                        <div class="column">
+                            <strong>Quantity:</strong> @searchedStock.Quantity @searchedStock.MeasureType.<br/>
+                            <strong>Min:</strong> @searchedStock.MinQuantity @searchedStock.MeasureType.<br/>
+                            <strong>Max:</strong> @searchedStock.MaxQuantity @searchedStock.MeasureType.<br/>
+                        </div>
+                        <div class="column" style="display: flex; justify-content: flex-end;">
+                            <button class="btn-edit" @onclick="() => EditStock(searchedStock.StockID)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-delete" @onclick="() => DeleteStock(searchedStock.StockID)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                @if (stocks == null)
+                {
+                    <p>Loading...</p>
+                }
+                else
+                {
+                    @foreach (var stock in stocks)
+                    {
+                        <div class="stocklist-item">
+                            <div class="column">
+                                <strong>Name:</strong> @stock.Name<br/>
+                                <strong>Description:</strong> @stock.Description<br/>
+                                <strong>Category:</strong> @stock.Category.Name <br/>
+                            </div>
+                            <div class="column">
+                                <strong>Quantity:</strong> @stock.Quantity @stock.MeasureType.<br/>
+                                <strong>Min:</strong> @stock.MinQuantity @stock.MeasureType.<br/>
+                                <strong>Max:</strong> @stock.MaxQuantity @stock.MeasureType.<br/>
+                            </div>
+                            <div class="column" style="display: flex; justify-content: flex-end;">
+                                <button class="btn-edit" @onclick="() => EditStock(stock.StockID)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-delete" @onclick="() => DeleteStock(stock.StockID)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    }
+                }
+            }
         }
+
+
+
+        else if (selectedSection == Section.Categories)
+        {
+            @if (isSearching)
+            {
+                @if (searchedCategory == null)
+                {
+                    <p>No category found with ID @searchId</p>
+                }
+                else
+                {
+                    <div class="stocklist-item">
+                        <div class="column">
+                            <strong>Name:</strong> @searchedCategory.Name<br/>
+                            <strong>Description:</strong> @searchedCategory.Description<br/>
+                        </div>
+                        <div class="column">
+                        </div>
+                        <div class="column" style="display: flex; justify-content: flex-end;">
+                            <button class="btn-edit" @onclick="() => EditCategory(searchedCategory.CategoryID)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-delete" @onclick="() => DeleteCategory(searchedCategory.CategoryID)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                @if (categories == null)
+                {
+                    <p>Loading...</p>
+                }
+                else
+                {
+                    @foreach (var category in categories)
+                    {
+                        <div class="stocklist-item">
+                            <div class="column">
+                                <strong>Name:</strong> @category.Name<br/>
+                                <strong>Description:</strong> @category.Description<br/>
+                            </div>
+                            <div class="column">
+                            </div>
+                            <div class="column" style="display: flex; justify-content: flex-end;">
+                                <button class="btn-edit" @onclick="() => EditCategory(category.CategoryID)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-delete" @onclick="() => DeleteCategory(category.CategoryID)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        }
+
+
+
+        else if (selectedSection == Section.Items)
+        {
+            @if (isSearching)
+            {
+                @if (searchedItem == null)
+                {
+                    <p>No item found with ID @searchId</p>
+                }
+                else
+                {
+                    <div class="stocklist-item">
+                        <div class="column">
+                            <strong>Name:</strong> @searchedItem.Stock.Name<br/>
+                            <strong>Description:</strong> @searchedItem.Stock.Description<br/>
+                            <strong>Item Description:</strong> @searchedItem.ItemDescription<br/>
+                        </div>
+                        <div class="column">
+                            <strong>Spoil Date:</strong> @searchedItem.SpoilDate<br/>
+                            <strong>Quantity:</strong> @searchedItem.Measure @searchedItem.Stock.MeasureType.<br/>
+                        </div>
+                        <div class="column" style="display: flex; justify-content: flex-end;">
+                            <button class="btn-edit" @onclick="() => EditItem(searchedItem.ItemID)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-delete" @onclick="() => DeleteItem(searchedItem.ItemID)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                @if (items == null)
+                {
+                    <p>Loading...</p>
+                }
+                else
+                {
+                    @foreach (var item in items)
+                    {
+                        <div class="stocklist-item">
+                            <div class="column">
+                                <strong>Name:</strong> @item.Stock.Name<br/>
+                                <strong>Description:</strong> @item.Stock.Description<br/>
+                                <strong>Item Description:</strong> @item.ItemDescription<br/>
+                            </div>
+                            <div class="column">
+                                <strong>Spoil Date:</strong> @item.SpoilDate<br/>
+                                <strong>Quantity:</strong> @item.Measure @item.Stock.MeasureType.<br/>
+                            </div>
+                            <div class="column" style="display: flex; justify-content: flex-end;">
+                                <button class="btn-edit" @onclick="() => EditItem(item.ItemID)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-delete" @onclick="() => DeleteItem(item.ItemID)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        }
+
+
+
     </div>
 </div>
 
@@ -46,6 +252,23 @@
     private List<StockModel>? stocks;
     private List<CategoryModel>? categories;
     private List<ItemModel>? items;
+
+    private StockModel? searchedStock;
+    private CategoryModel? searchedCategory;
+    private ItemModel? searchedItem;
+    private string searchId = string.Empty;
+    private bool isSearching = false;
+
+
+    private Section selectedSection = Section.Stocks;
+
+
+    private enum Section
+    {
+        Stocks,
+        Categories,
+        Items
+    }
 
     // Fetch data when the component is initialized
     protected override async Task OnInitializedAsync()
@@ -55,18 +278,80 @@
         items = await ItemService.GetItemsAsync();
     }
 
-    private void NavigateToStocks()
+    private void ShowSection(Section section)
     {
-        NavigationManager.NavigateTo("/stocks");
+        selectedSection = section;
+        isSearching = false;
     }
 
-    private void NavigateToCategories()
+    private void CreateItem()
     {
-        NavigationManager.NavigateTo("/categories");
+        // Implement the create logic here
     }
 
-    private void NavigateToItems()
+    private async Task SearchItem()
     {
-        NavigationManager.NavigateTo("/items");
+        if (int.TryParse(searchId, out int id))
+        {
+            if (selectedSection == Section.Stocks)
+            {
+                searchedStock = await StockService.GetStockByIdAsync(id);
+                searchedItem = null;
+                searchedCategory = null;
+            }
+            else if (selectedSection == Section.Categories)
+            {
+                searchedCategory = await CategoryService.GetCategoryByIdAsync(id);
+                searchedItem = null;
+                searchedStock = null;
+            }
+            else if (selectedSection == Section.Items)
+            {
+                searchedItem = await ItemService.GetItemByIdAsync(id);
+                searchedStock = null;
+                searchedCategory = null;
+            }
+            isSearching = true;
+        }
+        else
+        {
+            searchedStock = null;
+            searchedCategory = null;
+            searchedItem = null;
+            isSearching = true;
+        }
+    }
+
+    private async void DeleteStock(int stockID)
+    {
+        await StockService.DeleteStockAsync(stockID);
+        stocks = await StockService.GetStocksAsync();
+    }
+
+    private void EditStock(int stockID)
+    {
+        // Implement the edit logic here
+    }
+
+    private async void DeleteCategory(int categoryID)
+    {
+        await CategoryService.DeleteCategoryAsync(categoryID);
+        categories = await CategoryService.GetCategoriesAsync();
+    }
+
+    private void EditCategory(int categoryID)
+    {
+        // Implement the edit logic here
+    }
+
+    private async void DeleteItem(int itemID)
+    {
+        await ItemService.DeleteItemAsync(itemID);
+        items = await ItemService.GetItemsAsync();
+    }
+
+    private void EditItem(int itemID)
+    {
+        // Implement the edit logic here
     }
 }
