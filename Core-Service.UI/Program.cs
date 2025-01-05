@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Core_Service.UI;
+using Blazored.Toast;
+
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -17,5 +19,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<StockService>();
 builder.Services.AddScoped<ItemService>();
+builder.Services.AddBlazoredToast();
 
 await builder.Build().RunAsync();
