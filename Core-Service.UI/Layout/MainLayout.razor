@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@using Blazored.Toast.Configuration
+
 <div class="page">
     <div class="sidebar-new">
         <NavMenu />
@@ -10,3 +12,13 @@
         </article>
     </main>
 </div>
+
+<BlazoredToasts Position="ToastPosition.BottomRight"
+                    Timeout="10"
+                    IconType="IconType.FontAwesome"
+                    SuccessClass="Success-toast-override"
+                    SuccessIcon="fa fa-thumbs-up"
+                    ErrorIcon="fa fa-bug" 
+                    InfoIcon="fa fa-info"
+                    WarningIcon="fa fa-exclamation-triangle"
+                    />

@@ -4,6 +4,7 @@
 @inject CategoryService CategoryService
 @inject ItemService ItemService
 @inject NavigationManager NavigationManager
+@inject IToastService ToastService
 
 <div class="stocklist-container">
     <div class="stocklist-button-container">
@@ -284,11 +285,6 @@
         isSearching = false;
     }
 
-    private void CreateItem()
-    {
-        // Implement the create logic here
-    }
-
     private async Task SearchItem()
     {
         if (int.TryParse(searchId, out int id))
@@ -322,10 +318,24 @@
         }
     }
 
-    private async void DeleteStock(int stockID)
+    private void CreateStock()
     {
-        await StockService.DeleteStockAsync(stockID);
-        stocks = await StockService.GetStocksAsync();
+        // Implement the create logic here
+    }
+
+    private async Task DeleteStock(int stockID)
+    {
+        try
+        {
+            await StockService.DeleteStockAsync(stockID);
+            stocks = await StockService.GetStocksAsync();
+            ToastService.ShowSuccess("Stock deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error deleting stock: {ex.Message}");
+        }
+        StateHasChanged(); // Refresh the UI
     }
 
     private void EditStock(int stockID)
@@ -333,21 +343,50 @@
         // Implement the edit logic here
     }
 
-    private async void DeleteCategory(int categoryID)
+    private void CreateCategory()
     {
-        await CategoryService.DeleteCategoryAsync(categoryID);
-        categories = await CategoryService.GetCategoriesAsync();
+        // Implement the create logic here
     }
+
+    private async Task DeleteCategory(int categoryID)
+    {
+        try
+        {
+            await CategoryService.DeleteCategoryAsync(categoryID);
+            categories = await CategoryService.GetCategoriesAsync();
+            ToastService.ShowSuccess("Category deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error deleting category: {ex.Message}");
+        }
+        StateHasChanged();
+    }
+
 
     private void EditCategory(int categoryID)
     {
         // Implement the edit logic here
     }
 
-    private async void DeleteItem(int itemID)
+    private void CreateItem()
     {
-        await ItemService.DeleteItemAsync(itemID);
-        items = await ItemService.GetItemsAsync();
+        // Implement the create logic here
+    }
+
+    private async Task DeleteItem(int itemID)
+    {
+        try
+        {
+            await ItemService.DeleteItemAsync(itemID);
+            items = await ItemService.GetItemsAsync();
+            ToastService.ShowSuccess("Item deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Error deleting item: {ex.Message}");
+        }
+        StateHasChanged();
     }
 
     private void EditItem(int itemID)
