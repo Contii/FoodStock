@@ -1,10 +1,12 @@
 @page "/stock"
 @using FoodStock.Models
+@using Core_Service.UI.Components
 @inject StockService StockService
 @inject CategoryService CategoryService
 @inject ItemService ItemService
 @inject NavigationManager NavigationManager
 @inject IToastService ToastService
+
 
 <div class="stocklist-container">
     <div class="stocklist-button-container">
@@ -29,7 +31,7 @@
         <div class="stocklist-header-section">
             <div class="column">
                 <h4>@selectedSection.ToString()</h4>
-                <button class="btn-create" @onclick="CreateItem">
+                <button class="btn-create" @onclick="ShowCreateModal">
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
@@ -57,7 +59,7 @@
                         <div class="column">
                             <strong>Name:</strong> @searchedStock.Name<br/>
                             <strong>Description:</strong> @searchedStock.Description<br/>
-                            <strong>Category:</strong> @searchedStock.Category.Name <br/>
+                            <strong>Category:</strong> @searchedStock.Category?.Name <br/>
                         </div>
                         <div class="column">
                             <strong>Quantity:</strong> @searchedStock.Quantity @searchedStock.MeasureType.<br/>
@@ -65,7 +67,7 @@
                             <strong>Max:</strong> @searchedStock.MaxQuantity @searchedStock.MeasureType.<br/>
                         </div>
                         <div class="column" style="display: flex; justify-content: flex-end;">
-                            <button class="btn-edit" @onclick="() => EditStock(searchedStock.StockID)">
+                            <button class="btn-edit" >
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn-delete" @onclick="() => DeleteStock(searchedStock.StockID)">
@@ -90,7 +92,7 @@
                             <div class="column">
                                 <strong>Name:</strong> @stock.Name<br/>
                                 <strong>Description:</strong> @stock.Description<br/>
-                                <strong>Category:</strong> @stock.Category.Name <br/>
+                                <strong>Category:</strong> @stock.Category?.Name <br/>
                             </div>
                             <div class="column">
                                 <strong>Quantity:</strong> @stock.Quantity @stock.MeasureType.<br/>
@@ -98,7 +100,7 @@
                                 <strong>Max:</strong> @stock.MaxQuantity @stock.MeasureType.<br/>
                             </div>
                             <div class="column" style="display: flex; justify-content: flex-end;">
-                                <button class="btn-edit" @onclick="() => EditStock(stock.StockID)">
+                                <button class="btn-edit" >
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-delete" @onclick="() => DeleteStock(stock.StockID)">
@@ -132,7 +134,7 @@
                         <div class="column">
                         </div>
                         <div class="column" style="display: flex; justify-content: flex-end;">
-                            <button class="btn-edit" @onclick="() => EditCategory(searchedCategory.CategoryID)">
+                            <button class="btn-edit" >
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn-delete" @onclick="() => DeleteCategory(searchedCategory.CategoryID)">
@@ -161,7 +163,7 @@
                             <div class="column">
                             </div>
                             <div class="column" style="display: flex; justify-content: flex-end;">
-                                <button class="btn-edit" @onclick="() => EditCategory(category.CategoryID)">
+                                <button class="btn-edit" >
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-delete" @onclick="() => DeleteCategory(category.CategoryID)">
@@ -198,7 +200,7 @@
                             <strong>Quantity:</strong> @searchedItem.Measure @searchedItem.Stock.MeasureType.<br/>
                         </div>
                         <div class="column" style="display: flex; justify-content: flex-end;">
-                            <button class="btn-edit" @onclick="() => EditItem(searchedItem.ItemID)">
+                            <button class="btn-edit" >
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn-delete" @onclick="() => DeleteItem(searchedItem.ItemID)">
@@ -230,7 +232,7 @@
                                 <strong>Quantity:</strong> @item.Measure @item.Stock.MeasureType.<br/>
                             </div>
                             <div class="column" style="display: flex; justify-content: flex-end;">
-                                <button class="btn-edit" @onclick="() => EditItem(item.ItemID)">
+                                <button class="btn-edit" >
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-delete" @onclick="() => DeleteItem(item.ItemID)">
@@ -249,6 +251,22 @@
     </div>
 </div>
 
+@if (showCreateModal)
+{
+    @if (selectedSection == Section.Stocks)
+    {
+        <StockCreateModal OnClose="HideCreateModal" />
+    }
+    else if (selectedSection == Section.Categories)
+    {
+        <CategoryCreateModal OnClose="HideCreateModal" />
+    }
+    else if (selectedSection == Section.Items)
+    {
+        <ItemCreateModal OnClose="HideCreateModal" />
+    }
+}
+
 @code {
     private List<StockModel>? stocks;
     private List<CategoryModel>? categories;
@@ -257,8 +275,10 @@
     private StockModel? searchedStock;
     private CategoryModel? searchedCategory;
     private ItemModel? searchedItem;
+
     private string searchId = string.Empty;
     private bool isSearching = false;
+    private bool showCreateModal = false;
 
 
     private Section selectedSection = Section.Stocks;
@@ -285,27 +305,44 @@
         isSearching = false;
     }
 
+    private void ShowCreateModal()
+    {
+        showCreateModal = true;
+    }
+
+    private void HideCreateModal()
+    {
+        showCreateModal = false;
+    }
+
     private async Task SearchItem()
     {
         if (int.TryParse(searchId, out int id))
         {
-            if (selectedSection == Section.Stocks)
+            try
             {
-                searchedStock = await StockService.GetStockByIdAsync(id);
-                searchedItem = null;
-                searchedCategory = null;
+                if (selectedSection == Section.Stocks)
+                {
+                    searchedStock = await StockService.GetStockByIdAsync(id);
+                    searchedItem = null;
+                    searchedCategory = null;
+                }
+                else if (selectedSection == Section.Categories)
+                {
+                    searchedCategory = await CategoryService.GetCategoryByIdAsync(id);
+                    searchedItem = null;
+                    searchedStock = null;
+                }
+                else if (selectedSection == Section.Items)
+                {
+                    searchedItem = await ItemService.GetItemByIdAsync(id);
+                    searchedStock = null;
+                    searchedCategory = null;
+                }
             }
-            else if (selectedSection == Section.Categories)
+            catch (Exception ex)
             {
-                searchedCategory = await CategoryService.GetCategoryByIdAsync(id);
-                searchedItem = null;
-                searchedStock = null;
-            }
-            else if (selectedSection == Section.Items)
-            {
-                searchedItem = await ItemService.GetItemByIdAsync(id);
-                searchedStock = null;
-                searchedCategory = null;
+                ToastService.ShowError($"Error: {ex.Message}");
             }
             isSearching = true;
         }
@@ -316,11 +353,7 @@
             searchedItem = null;
             isSearching = true;
         }
-    }
-
-    private void CreateStock()
-    {
-        // Implement the create logic here
+        StateHasChanged();
     }
 
     private async Task DeleteStock(int stockID)
@@ -343,11 +376,6 @@
         // Implement the edit logic here
     }
 
-    private void CreateCategory()
-    {
-        // Implement the create logic here
-    }
-
     private async Task DeleteCategory(int categoryID)
     {
         try
@@ -367,11 +395,6 @@
     private void EditCategory(int categoryID)
     {
         // Implement the edit logic here
-    }
-
-    private void CreateItem()
-    {
-        // Implement the create logic here
     }
 
     private async Task DeleteItem(int itemID)
