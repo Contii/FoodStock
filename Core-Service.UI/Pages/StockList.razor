@@ -67,7 +67,7 @@
                             <strong>Max:</strong> @searchedStock.MaxQuantity @searchedStock.MeasureType.<br/>
                         </div>
                         <div class="column" style="display: flex; justify-content: flex-end;">
-                            <button class="btn-edit" >
+                            <button class="btn-edit" @onclick="() => ShowUpdateModal(searchedStock)">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn-delete" @onclick="() => DeleteStock(searchedStock.StockID)">
@@ -100,7 +100,7 @@
                                 <strong>Max:</strong> @stock.MaxQuantity @stock.MeasureType.<br/>
                             </div>
                             <div class="column" style="display: flex; justify-content: flex-end;">
-                                <button class="btn-edit" >
+                                <button class="btn-edit" @onclick="() => ShowUpdateModal(stock)">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-delete" @onclick="() => DeleteStock(stock.StockID)">
@@ -134,7 +134,7 @@
                         <div class="column">
                         </div>
                         <div class="column" style="display: flex; justify-content: flex-end;">
-                            <button class="btn-edit" >
+                            <button class="btn-edit" @onclick="() => ShowUpdateModal(searchedCategory)">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn-delete" @onclick="() => DeleteCategory(searchedCategory.CategoryID)">
@@ -163,7 +163,7 @@
                             <div class="column">
                             </div>
                             <div class="column" style="display: flex; justify-content: flex-end;">
-                                <button class="btn-edit" >
+                                <button class="btn-edit" @onclick="() => ShowUpdateModal(category)">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-delete" @onclick="() => DeleteCategory(category.CategoryID)">
@@ -200,7 +200,7 @@
                             <strong>Quantity:</strong> @searchedItem.Measure @searchedItem.Stock.MeasureType.<br/>
                         </div>
                         <div class="column" style="display: flex; justify-content: flex-end;">
-                            <button class="btn-edit" >
+                            <button class="btn-edit" @onclick="() => ShowUpdateModal(searchedItem)">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn-delete" @onclick="() => DeleteItem(searchedItem.ItemID)">
@@ -232,7 +232,7 @@
                                 <strong>Quantity:</strong> @item.Measure @item.Stock.MeasureType.<br/>
                             </div>
                             <div class="column" style="display: flex; justify-content: flex-end;">
-                                <button class="btn-edit" >
+                                <button class="btn-edit" @onclick="() => ShowUpdateModal(item)">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-delete" @onclick="() => DeleteItem(item.ItemID)">
@@ -267,6 +267,22 @@
     }
 }
 
+@if (showUpdateModal)
+{
+    @if (selectedSection == Section.Stocks && selectedEntity is StockModel)
+    {
+        <StockUpdateModal OnClose="HideUpdateModal" Stock="(StockModel)selectedEntity" />
+    }
+    else if (selectedSection == Section.Categories && selectedEntity is CategoryModel)
+    {
+        <CategoryUpdateModal OnClose="HideUpdateModal" Category="(CategoryModel)selectedEntity" />
+    }
+    else if (selectedSection == Section.Items && selectedEntity is ItemModel)
+    {
+        <ItemUpdateModal OnClose="HideUpdateModal" Item="(ItemModel)selectedEntity" />
+    }
+}
+
 @code {
     private List<StockModel>? stocks;
     private List<CategoryModel>? categories;
@@ -275,11 +291,11 @@
     private StockModel? searchedStock;
     private CategoryModel? searchedCategory;
     private ItemModel? searchedItem;
-
+    private object? selectedEntity;
     private string searchId = string.Empty;
     private bool isSearching = false;
     private bool showCreateModal = false;
-
+    private bool showUpdateModal = false;
 
     private Section selectedSection = Section.Stocks;
 
@@ -315,6 +331,17 @@
         showCreateModal = false;
     }
 
+    private void ShowUpdateModal(object entity)
+    {
+        selectedEntity = entity;
+        showUpdateModal = true;
+    }
+
+    private void HideUpdateModal()
+    {
+        showUpdateModal = false;
+    }
+    
     private async Task SearchItem()
     {
         if (int.TryParse(searchId, out int id))
