@@ -1,13 +1,45 @@
 @namespace Core_Service.UI.Components
+@using FoodStock.Models
+@inject CategoryService CategoryService
+@inject IToastService ToastService
 
 @code {
     [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnCategoryCreated { get; set; }
+
+    private CategoryModel newCategory = new CategoryModel();
+    private string? errorMessage;
+    private string? categoryIdInput;
+
+    private async Task CreateCategory()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(categoryIdInput) && int.TryParse(categoryIdInput, out int categoryId))
+            {
+                newCategory.CategoryID = categoryId;
+            }
+
+            await CategoryService.CreateCategoryAsync(newCategory);
+            ToastService.ShowSuccess("Category created successfully.");
+            await OnCategoryCreated.InvokeAsync(null);
+            await OnClose.InvokeAsync(null);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error creating category: {ex.Message}";
+        }
+    }
 
     private async Task CloseModal()
     {
         if (OnClose.HasDelegate)
         {
             await OnClose.InvokeAsync(null);
+        }
+        if (OnCategoryCreated.HasDelegate)
+        {
+            await OnCategoryCreated.InvokeAsync(null);
         }
     }
 }
@@ -16,8 +48,34 @@
     <div class="modal-content" @onclick:stopPropagation="true">
         <button class="modal-close" @onclick="CloseModal">X</button>
         <h3>Create New Category</h3>
-        <!-- Add your form or content here -->
-        <button @onclick="CloseModal">Close</button>
+        <EditForm Model="newCategory" OnValidSubmit="CreateCategory">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <label for="categoryid"><strong>ID</strong>:</label>
+                <InputText type="number" id="categoryid" @bind-Value="categoryIdInput" placeholder="Leave blank to auto-generate." />
+            </div>
+            <div class="form-group">
+                <label for="name"><strong>Name*</strong>:</label>
+                <InputText id="name" @bind-Value="newCategory.Name" placeholder="Drinks."/>
+            </div>
+            <div class="form-group">
+                <label for="description"><strong>Description</strong>:</label>
+                <InputText id="description" @bind-Value="newCategory.Description" />
+            </div>
+            <!-- Add other fields as necessary -->
+
+            <div class="button-group">
+            <button type="submit" class="btn btn-create"><strong>CREATE</strong></button>
+            <button type="button" class="btn btn-cancel" @onclick="CloseModal"><strong>CANCEL</strong></button>
+            </div>
+        </EditForm>
     </div>
 </div>
 
@@ -54,5 +112,49 @@
         border: none;
         font-size: 1.5rem;
         cursor: pointer;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 10px;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group input {
+        padding: 8px;
+        font-size: 1rem;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-create {
+        background-color: green;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: red;
+        color: white;
     }
 </style>

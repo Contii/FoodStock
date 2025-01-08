@@ -259,11 +259,11 @@
     }
     else if (selectedSection == Section.Categories)
     {
-        <CategoryCreateModal OnClose="HideCreateModal" />
+        <CategoryCreateModal OnClose="HideCreateModal" OnCategoryCreated="LoadCategories"/>
     }
     else if (selectedSection == Section.Items)
     {
-        <ItemCreateModal OnClose="HideCreateModal" />
+        <ItemCreateModal OnClose="HideCreateModal"/>
     }
 }
 
@@ -275,12 +275,13 @@
     }
     else if (selectedSection == Section.Categories && selectedEntity is CategoryModel)
     {
-        <CategoryUpdateModal OnClose="HideUpdateModal" Category="(CategoryModel)selectedEntity" />
+        <CategoryUpdateModal OnClose="HideUpdateModal" Category="(CategoryModel)selectedEntity" OnCategoryUpdated="LoadCategories"/>
     }
     else if (selectedSection == Section.Items && selectedEntity is ItemModel)
     {
         <ItemUpdateModal OnClose="HideUpdateModal" Item="(ItemModel)selectedEntity" />
     }
+    isSearching = false;
 }
 
 @code {
@@ -321,14 +322,21 @@
         isSearching = false;
     }
 
+    private async Task LoadCategories()
+    {
+        categories = await CategoryService.GetCategoriesAsync();
+        StateHasChanged();
+    }
+
     private void ShowCreateModal()
     {
         showCreateModal = true;
     }
 
-    private void HideCreateModal()
+    private async Task HideCreateModal()
     {
         showCreateModal = false;
+        await LoadCategories();
     }
 
     private void ShowUpdateModal(object entity)
@@ -337,11 +345,12 @@
         showUpdateModal = true;
     }
 
-    private void HideUpdateModal()
+    private async Task HideUpdateModal()
     {
         showUpdateModal = false;
+        await LoadCategories();
     }
-    
+
     private async Task SearchItem()
     {
         if (int.TryParse(searchId, out int id))
@@ -390,6 +399,7 @@
             await StockService.DeleteStockAsync(stockID);
             stocks = await StockService.GetStocksAsync();
             ToastService.ShowSuccess("Stock deleted successfully.");
+            isSearching = false;
         }
         catch (Exception ex)
         {
@@ -410,6 +420,7 @@
             await CategoryService.DeleteCategoryAsync(categoryID);
             categories = await CategoryService.GetCategoriesAsync();
             ToastService.ShowSuccess("Category deleted successfully.");
+            isSearching = false;
         }
         catch (Exception ex)
         {
@@ -431,6 +442,7 @@
             await ItemService.DeleteItemAsync(itemID);
             items = await ItemService.GetItemsAsync();
             ToastService.ShowSuccess("Item deleted successfully.");
+            isSearching = false;
         }
         catch (Exception ex)
         {

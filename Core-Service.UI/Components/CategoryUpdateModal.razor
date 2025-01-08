@@ -1,15 +1,50 @@
 @namespace Core_Service.UI.Components
 @using FoodStock.Models
+@inject CategoryService CategoryService
+@inject IToastService ToastService
 
 @code {
     [Parameter] public EventCallback OnClose { get; set; }
-    [Parameter] public CategoryModel? Category { get; set; }
+    [Parameter] public CategoryModel Category { get; set; } = new CategoryModel();
+    [Parameter] public EventCallback OnCategoryUpdated { get; set; }
+
+    private CategoryModel updatedCategory = new CategoryModel();
+    private string? errorMessage;
+
+    protected override void OnInitialized()
+    {
+        updatedCategory = new CategoryModel
+        {
+            CategoryID = Category.CategoryID,
+            Name = Category.Name,
+            Description = Category.Description
+        };
+    }
+
+    private async Task UpdateCategory()
+    {
+        try
+        {
+            await CategoryService.UpdateCategoryAsync(updatedCategory);
+            ToastService.ShowSuccess("Category updated successfully.");
+            await OnCategoryUpdated.InvokeAsync(null);
+            await OnClose.InvokeAsync(null);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating category: {ex.Message}";
+        }
+    }
 
     private async Task CloseModal()
     {
         if (OnClose.HasDelegate)
         {
             await OnClose.InvokeAsync(null);
+        }
+        if (OnCategoryUpdated.HasDelegate)
+        {
+        await OnCategoryUpdated.InvokeAsync(null);
         }
     }
 }
@@ -18,8 +53,34 @@
     <div class="modal-content" @onclick:stopPropagation="true">
         <button class="modal-close" @onclick="CloseModal">X</button>
         <h3>Update Category</h3>
-        <!-- Add your form or content here -->
-        <button @onclick="CloseModal">Close</button>
+        <EditForm Model="updatedCategory" OnValidSubmit="UpdateCategory">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <label for="categoryid"><strong>ID</strong>:</label>
+                <InputNumber id="categoryid" @bind-Value="updatedCategory.CategoryID" readonly />
+            </div>
+            <div class="form-group">
+                <label for="name"><strong>Name*</strong>:</label>
+                <InputText id="name" @bind-Value="updatedCategory.Name" placeholder="Enter the category name" />
+            </div>
+            <div class="form-group">
+                <label for="description"><strong>Description</strong>:</label>
+                <InputText id="description" @bind-Value="updatedCategory.Description" placeholder="Enter a description for the category" />
+            </div>
+            <!-- Add other fields as necessary -->
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-create"><strong>UPDATE</strong></button>
+                <button type="button" class="btn btn-cancel" @onclick="CloseModal"><strong>CANCEL</strong></button>
+            </div>
+        </EditForm>
     </div>
 </div>
 
@@ -45,7 +106,6 @@
         max-width: 600px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         position: relative;
-        z-index: 1001;
     }
 
     .modal-close {
@@ -56,5 +116,55 @@
         border: none;
         font-size: 1.5rem;
         cursor: pointer;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 10px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group input {
+        padding: 8px;
+        font-size: 1rem;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-create {
+        background-color: green;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: red;
+        color: white;
     }
 </style>
