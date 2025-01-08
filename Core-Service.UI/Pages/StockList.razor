@@ -255,7 +255,7 @@
 {
     @if (selectedSection == Section.Stocks)
     {
-        <StockCreateModal OnClose="HideCreateModal" />
+        <StockCreateModal OnClose="HideCreateModal" OnStockCreated="LoadStocks"/>
     }
     else if (selectedSection == Section.Categories)
     {
@@ -263,7 +263,7 @@
     }
     else if (selectedSection == Section.Items)
     {
-        <ItemCreateModal OnClose="HideCreateModal"/>
+        <ItemCreateModal OnClose="HideCreateModal" OnItemCreated="LoadItems"/>
     }
 }
 
@@ -271,7 +271,7 @@
 {
     @if (selectedSection == Section.Stocks && selectedEntity is StockModel)
     {
-        <StockUpdateModal OnClose="HideUpdateModal" Stock="(StockModel)selectedEntity" />
+        <StockUpdateModal OnClose="HideUpdateModal" Stock="(StockModel)selectedEntity" OnStockUpdated="LoadStocks"/>
     }
     else if (selectedSection == Section.Categories && selectedEntity is CategoryModel)
     {
@@ -279,7 +279,7 @@
     }
     else if (selectedSection == Section.Items && selectedEntity is ItemModel)
     {
-        <ItemUpdateModal OnClose="HideUpdateModal" Item="(ItemModel)selectedEntity" />
+        <ItemUpdateModal OnClose="HideUpdateModal" Item="(ItemModel)selectedEntity" OnItemUpdated="LoadItems"/>
     }
     isSearching = false;
 }
@@ -322,9 +322,21 @@
         isSearching = false;
     }
 
+    private async Task LoadStocks()
+    {
+        stocks = await StockService.GetStocksAsync();
+        StateHasChanged();
+    }
+
     private async Task LoadCategories()
     {
         categories = await CategoryService.GetCategoriesAsync();
+        StateHasChanged();
+    }
+
+    private async Task LoadItems()
+    {
+        items = await ItemService.GetItemsAsync();
         StateHasChanged();
     }
 
@@ -336,7 +348,7 @@
     private async Task HideCreateModal()
     {
         showCreateModal = false;
-        await LoadCategories();
+        await ReloadData();
     }
 
     private void ShowUpdateModal(object entity)
@@ -348,7 +360,23 @@
     private async Task HideUpdateModal()
     {
         showUpdateModal = false;
-        await LoadCategories();
+        await ReloadData();
+    }
+    
+    private async Task ReloadData()
+    {
+        if (selectedSection == Section.Stocks)
+        {
+            await LoadStocks();
+        }
+        else if (selectedSection == Section.Categories)
+        {
+            await LoadCategories();
+        }
+        else if (selectedSection == Section.Items)
+        {
+            await LoadItems();
+        }
     }
 
     private async Task SearchItem()
@@ -408,11 +436,6 @@
         StateHasChanged(); // Refresh the UI
     }
 
-    private void EditStock(int stockID)
-    {
-        // Implement the edit logic here
-    }
-
     private async Task DeleteCategory(int categoryID)
     {
         try
@@ -429,12 +452,6 @@
         StateHasChanged();
     }
 
-
-    private void EditCategory(int categoryID)
-    {
-        // Implement the edit logic here
-    }
-
     private async Task DeleteItem(int itemID)
     {
         try
@@ -449,10 +466,5 @@
             ToastService.ShowError($"Error deleting item: {ex.Message}");
         }
         StateHasChanged();
-    }
-
-    private void EditItem(int itemID)
-    {
-        // Implement the edit logic here
     }
 }
