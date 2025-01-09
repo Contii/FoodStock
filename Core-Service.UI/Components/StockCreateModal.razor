@@ -1,13 +1,76 @@
 @namespace Core_Service.UI.Components
+@using FoodStock.Models
+@inject StockService StockService
+@inject CategoryService CategoryService
+@inject IToastService ToastService
 
 @code {
     [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnStockCreated { get; set; }
+
+    private StockModel newStock = new StockModel();
+    private List<CategoryModel> categories = new List<CategoryModel>();
+    private string? errorMessage;
+    private string? stockIdInput;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetCategoriesAsync();
+    }
+
+    private async Task CreateStock()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(stockIdInput) && int.TryParse(stockIdInput, out int stockId))
+            {
+                newStock.StockID = stockId;
+            }
+
+            // Ensure the category is set correctly
+            if (newStock.CategoryID.HasValue)
+            {
+                var selectedCategory = categories.FirstOrDefault(c => c.CategoryID == newStock.CategoryID.Value);
+                if (selectedCategory != null)
+                {
+                    newStock.Category = new CategoryModel
+                    {
+                        CategoryID = selectedCategory.CategoryID,
+                        Name = selectedCategory.Name
+                    };
+                }
+                else
+                {
+                    errorMessage = "Please select a valid category.";
+                    return;
+                }
+            }
+            else
+            {
+                errorMessage = "Please select a category.";
+                return;
+            }
+
+            await StockService.CreateStockAsync(newStock);
+            ToastService.ShowSuccess("Stock created successfully.");
+            await OnStockCreated.InvokeAsync(null);
+            await OnClose.InvokeAsync(null);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error creating stock: {ex.Message}";
+        }
+    }
 
     private async Task CloseModal()
     {
         if (OnClose.HasDelegate)
         {
             await OnClose.InvokeAsync(null);
+        }
+        if (OnStockCreated.HasDelegate)
+        {
+            await OnStockCreated.InvokeAsync(null);
         }
     }
 }
@@ -16,8 +79,62 @@
     <div class="modal-content" @onclick:stopPropagation="true">
         <button class="modal-close" @onclick="CloseModal">X</button>
         <h3>Create New Stock</h3>
-        <!-- Add your form or content here -->
-        <button @onclick="CloseModal">Close</button>
+        <EditForm Model="newStock" OnValidSubmit="CreateStock">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <label for="stockid"><strong>ID</strong>:</label>
+                <InputText type="number" id="stockid" @bind-Value="stockIdInput" placeholder="Leave blank to auto-generate." />
+            </div>
+            <div class="form-group">
+                <label for="name"><strong>Name*</strong>:</label>
+                <InputText id="name" @bind-Value="newStock.Name" placeholder="Enter the stock name" />
+            </div>
+            <div class="form-group">
+                <label for="description"><strong>Description</strong>:</label>
+                <InputText id="description" @bind-Value="newStock.Description" />
+            </div>
+            <div class="form-group">
+                <label for="category"><strong>Category</strong>:</label>
+                <InputSelect id="category" @bind-Value="newStock.CategoryID" TValue="int?">
+                    <option value="">Select a category</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.CategoryID">@category.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label for="minquantity"><strong>Minimun Quantity</strong>:</label>
+                <InputNumber id="minquantity" @bind-Value="newStock.MinQuantity" />
+            </div>
+            <div class="form-group">
+                <label for="maxquantity"><strong>Maximum Quantity</strong>:</label>
+                <InputNumber id="maxquantity" @bind-Value="newStock.MaxQuantity" />
+            </div>
+            <div class="form-group">
+                <label for="measuretype"><strong>Measure Type*</strong>:</label>
+                <InputSelect id="measuretype" @bind-Value="newStock.MeasureType" TValue="MeasureTypeEnum">
+                    <option value="">Select a measure type</option>
+                    @foreach (MeasureTypeEnum measureType in Enum.GetValues(typeof(MeasureTypeEnum)))
+                    {
+                        <option value="@measureType">@measureType</option>
+                    }
+                </InputSelect>
+            </div>
+            <!-- Add other fields as necessary -->
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-create"><strong>CREATE</strong></button>
+                <button type="button" class="btn btn-cancel" @onclick="CloseModal"><strong>CANCEL</strong></button>
+            </div>
+        </EditForm>
     </div>
 </div>
 
@@ -43,7 +160,6 @@
         max-width: 600px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         position: relative;
-        z-index: 1001;
     }
 
     .modal-close {
@@ -54,5 +170,55 @@
         border: none;
         font-size: 1.5rem;
         cursor: pointer;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 10px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group input {
+        padding: 8px;
+        font-size: 1rem;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-create {
+        background-color: green;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: red;
+        color: white;
     }
 </style>
