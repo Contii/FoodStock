@@ -94,8 +94,9 @@ namespace FoodStock.Core_Service.API.Controllers
             item.StockID = updatedItem.StockID;
             item.Stock = updatedItem.Stock;
 
+            _context.Items.Update(item);
             await _context.SaveChangesAsync();
-
+            
             stock = await _context.Stocks.FindAsync(item.StockID); // retrieve the stock to update.
             var stockController = new StockController(_context); // Create an instance of StockController.
 
