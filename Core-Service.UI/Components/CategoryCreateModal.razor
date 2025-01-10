@@ -11,10 +11,14 @@
     private string? errorMessage;
     private string? categoryIdInput;
 
+
+    // Main method to create a new category when calling the CreateCategoryAsync method from the CategoryService class.
+    // it converts and checks the category id input and then creates a new category.
     private async Task CreateCategory()
     {
         try
         {
+            // parse the category ID if it is provided
             if (!string.IsNullOrEmpty(categoryIdInput) && int.TryParse(categoryIdInput, out int categoryId))
             {
                 newCategory.CategoryID = categoryId;
@@ -31,7 +35,7 @@
         }
     }
 
-    private async Task CloseModal()
+    private async Task CloseModal() // Used to close the modal and invoke the OnClose and OnCategoryCreated events.
     {
         if (OnClose.HasDelegate)
         {
@@ -57,7 +61,7 @@
                 <div class="error-message">@errorMessage</div>
             }
 
-            <div class="form-group">
+            <div class="form-group"> <!-- This InputText using type="number" is used to force a numeric input -->
                 <label for="categoryid"><strong>ID</strong>:</label>
                 <InputText type="number" id="categoryid" @bind-Value="categoryIdInput" placeholder="Leave blank to auto-generate." />
             </div>

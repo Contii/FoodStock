@@ -47,13 +47,13 @@
                 var selectedStock = stocks.FirstOrDefault(c => c.StockID == newItem.StockID);
                 if (selectedStock != null)
                 {
-                    newItem.Stock = new StockModel
+                    newItem.Stock = new StockModel // Hotfix to ensure the [required] stock and category is set, values are [JsonIgnore].
                     {
                         StockID = selectedStock.StockID,
                         Name = selectedStock.Name,
                         Category = new CategoryModel
                         {
-                            Name = "Name" // Hotfix: Category.Name is required, but we don't have it here.
+                            Name = "Name" 
                         }
                     };
                 }

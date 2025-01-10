@@ -24,10 +24,10 @@
         </button>
     </div>
 
+    <!-- Main section to display the selected section's content -->
     <div class="stocklist-main-section">
 
-
-
+        <!-- Header section with title, create and search button -->
         <div class="stocklist-header-section">
             <div class="column">
                 <h4>@selectedSection.ToString()</h4>
@@ -43,8 +43,7 @@
             </div>
         </div>
 
-
-
+        <!-- Conditional rendering based on the selected section -->
         @if (selectedSection == Section.Stocks)
         {
             @if (isSearching)
@@ -114,8 +113,6 @@
             }
         }
 
-
-
         else if (selectedSection == Section.Categories)
         {
             @if (isSearching)
@@ -176,8 +173,6 @@
                 }
             }
         }
-
-
 
         else if (selectedSection == Section.Items)
         {
@@ -245,17 +240,14 @@
                 }
             }
         }
-
-
-
     </div>
 </div>
 
-@if (showCreateModal)
+@if (showCreateModal) // Show the create modal based on the selected section
 {
     @if (selectedSection == Section.Stocks)
     {
-        <StockCreateModal OnClose="HideCreateModal" OnStockCreated="LoadStocks"/>
+        <StockCreateModal OnClose="HideCreateModal" OnStockCreated="LoadStocks"/> // Show the stock create modal and call the load method after closed.
     }
     else if (selectedSection == Section.Categories)
     {
@@ -267,7 +259,7 @@
     }
 }
 
-@if (showUpdateModal)
+@if (showUpdateModal) // Show the update modal based on the selected section
 {
     @if (selectedSection == Section.Stocks && selectedEntity is StockModel)
     {
@@ -285,84 +277,86 @@
 }
 
 @code {
-    private List<StockModel>? stocks;
-    private List<CategoryModel>? categories;
-    private List<ItemModel>? items;
+    private Section selectedSection = Section.Stocks; // Default selected section
+    private object? selectedEntity; // Selected entity to update
 
-    private StockModel? searchedStock;
-    private CategoryModel? searchedCategory;
-    private ItemModel? searchedItem;
-    private object? selectedEntity;
+    // Search variables
     private string searchId = string.Empty;
     private bool isSearching = false;
-    private bool showCreateModal = false;
-    private bool showUpdateModal = false;
 
-    private Section selectedSection = Section.Stocks;
+    private bool showCreateModal = false; // when true, show the create modal
+    private bool showUpdateModal = false; // when true, show the update modal
 
+    private List<StockModel>? stocks;
+    private StockModel? searchedStock;
 
-    private enum Section
+    private List<CategoryModel>? categories;
+    private CategoryModel? searchedCategory;
+
+    private List<ItemModel>? items;
+    private ItemModel? searchedItem;
+
+    private enum Section // Enum to represent the selected section
     {
         Stocks,
         Categories,
         Items
     }
 
-    // Fetch data when the component is initialized
-    protected override async Task OnInitializedAsync()
+
+    protected override async Task OnInitializedAsync() // Fetch data when the component is initialized
     {
         stocks = await StockService.GetStocksAsync();
         categories = await CategoryService.GetCategoriesAsync();
         items = await ItemService.GetItemsAsync();
     }
-
-    private void ShowSection(Section section)
+    private void ShowSection(Section section) // Change the selected section
     {
         selectedSection = section;
         isSearching = false;
     }
 
-    private async Task LoadStocks()
-    {
-        stocks = await StockService.GetStocksAsync();
-        StateHasChanged();
-    }
 
+    // Load data methods
+    private async Task LoadStocks() 
+    {
+        stocks = await StockService.GetStocksAsync(); // Fetch stocks
+        StateHasChanged(); // Refresh the UI
+    }
     private async Task LoadCategories()
     {
         categories = await CategoryService.GetCategoriesAsync();
         StateHasChanged();
     }
-
     private async Task LoadItems()
     {
         items = await ItemService.GetItemsAsync();
         StateHasChanged();
     }
 
+
+    // Show and hide modal methods
     private void ShowCreateModal()
     {
         showCreateModal = true;
     }
-
     private async Task HideCreateModal()
     {
         showCreateModal = false;
         await ReloadData();
     }
-
     private void ShowUpdateModal(object entity)
     {
         selectedEntity = entity;
         showUpdateModal = true;
     }
-
     private async Task HideUpdateModal()
     {
         showUpdateModal = false;
         await ReloadData();
     }
-    
+
+    // Reload data based on the selected section, occurs when a new entity is created or updated
     private async Task ReloadData()
     {
         if (selectedSection == Section.Stocks)
@@ -379,6 +373,7 @@
         }
     }
 
+    // Search method
     private async Task SearchItem()
     {
         if (int.TryParse(searchId, out int id))
@@ -420,6 +415,8 @@
         StateHasChanged();
     }
 
+
+    // Delete methods
     private async Task DeleteStock(int stockID)
     {
         try
@@ -433,7 +430,7 @@
         {
             ToastService.ShowError($"Error deleting stock: {ex.Message}");
         }
-        StateHasChanged(); // Refresh the UI
+        StateHasChanged();
     }
 
     private async Task DeleteCategory(int categoryID)

@@ -11,7 +11,7 @@
     private CategoryModel updatedCategory = new CategoryModel();
     private string? errorMessage;
 
-    protected override void OnInitialized()
+    protected override void OnInitialized() // First of all, initialize the updatedCategory object with the values of the original object.
     {
         updatedCategory = new CategoryModel
         {
@@ -21,7 +21,7 @@
         };
     }
 
-    private async Task UpdateCategory()
+    private async Task UpdateCategory() // Update the category after the user submits the form.
     {
         try
         {

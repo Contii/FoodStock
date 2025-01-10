@@ -13,7 +13,7 @@
     private List<CategoryModel> categories = new List<CategoryModel>();
     private string? errorMessage;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() // Retrieve categories and set the updated stock when the component is initialized.
     {
         categories = await CategoryService.GetCategoriesAsync();
         updatedStock = new StockModel
@@ -40,7 +40,7 @@
                 var selectedCategory = categories.FirstOrDefault(c => c.CategoryID == updatedStock.CategoryID.Value);
                 if (selectedCategory != null)
                 {
-                    updatedStock.Category = new CategoryModel
+                    updatedStock.Category = new CategoryModel // Hotfix to ensure the [required] category is set, values are [JsonIgnore].
                     {
                         CategoryID = selectedCategory.CategoryID,
                         Name = selectedCategory.Name

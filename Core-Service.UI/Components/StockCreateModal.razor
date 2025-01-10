@@ -13,7 +13,7 @@
     private string? errorMessage;
     private string? stockIdInput;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() // Retrieve categories when the component is initialized
     {
         categories = await CategoryService.GetCategoriesAsync();
     }
@@ -22,6 +22,7 @@
     {
         try
         {
+            // parse the stock ID if it is provided
             if (!string.IsNullOrEmpty(stockIdInput) && int.TryParse(stockIdInput, out int stockId))
             {
                 newStock.StockID = stockId;
@@ -33,7 +34,7 @@
                 var selectedCategory = categories.FirstOrDefault(c => c.CategoryID == newStock.CategoryID.Value);
                 if (selectedCategory != null)
                 {
-                    newStock.Category = new CategoryModel
+                    newStock.Category = new CategoryModel // Hotfix to ensure the [required] category is set, values are [JsonIgnore].
                     {
                         CategoryID = selectedCategory.CategoryID,
                         Name = selectedCategory.Name
@@ -100,7 +101,7 @@
                 <label for="description"><strong>Description</strong>:</label>
                 <InputText id="description" @bind-Value="newStock.Description" />
             </div>
-            <div class="form-group">
+            <div class="form-group"> <!-- This InputSelect is used to show all and select a category while creating a stock -->
                 <label for="category"><strong>Category</strong>:</label>
                 <InputSelect id="category" @bind-Value="newStock.CategoryID" TValue="int?">
                     <option value="">Select a category</option>
@@ -118,7 +119,7 @@
                 <label for="maxquantity"><strong>Maximum Quantity</strong>:</label>
                 <InputNumber id="maxquantity" @bind-Value="newStock.MaxQuantity" />
             </div>
-            <div class="form-group">
+            <div class="form-group"> <!-- This InputSelect is used to show all and select a measure type while creating a stock -->
                 <label for="measuretype"><strong>Measure Type*</strong>:</label>
                 <InputSelect id="measuretype" @bind-Value="newStock.MeasureType" TValue="MeasureTypeEnum">
                     <option value="">Select a measure type</option>

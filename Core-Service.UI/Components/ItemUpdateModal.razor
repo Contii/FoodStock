@@ -7,7 +7,7 @@
 @code {
     [Parameter] public EventCallback OnClose { get; set; }
     [Parameter] public EventCallback OnItemUpdated { get; set; }
-    [Parameter] public ItemModel Item { get; set; }
+    [Parameter] public ItemModel Item { get; set; } = new ItemModel();
 
     private ItemModel updatedItem = new ItemModel();
     private List<StockModel> stocks = new List<StockModel>();
@@ -17,15 +17,15 @@
     protected override async Task OnInitializedAsync()
     {
         stocks = await StockService.GetStocksAsync();
-        updatedItem = new ItemModel
-        {
-            ItemID = Item.ItemID,
-            ItemDescription = Item.ItemDescription,
-            Measure = Item.Measure,
-            SpoilDate = Item.SpoilDate,
-            StockID = Item.StockID,
-            Stock = Item.Stock
-        };
+            updatedItem = new ItemModel
+            {
+                ItemID = Item.ItemID,
+                ItemDescription = Item.ItemDescription,
+                Measure = Item.Measure,
+                SpoilDate = Item.SpoilDate,
+                StockID = Item.StockID,
+                Stock = Item.Stock
+            };
     }
 
     private async Task UpdateItem()
@@ -52,13 +52,13 @@
                 var selectedStock = stocks.FirstOrDefault(c => c.StockID == updatedItem.StockID);
                 if (selectedStock != null)
                 {
-                    updatedItem.Stock = new StockModel
+                    updatedItem.Stock = new StockModel // Hotfix to ensure the [required] stock and category is set, values are [JsonIgnore].
                     {
                         StockID = selectedStock.StockID,
                         Name = selectedStock.Name,
                         Category = new CategoryModel
                         {
-                            Name = "Name" // Hotfix: Category.Name is required, but we don't have it here.
+                            Name = "Name"
                         }
                     };
                 }
