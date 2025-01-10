@@ -1,15 +1,119 @@
 @namespace Core_Service.UI.Components
 @using FoodStock.Models
+@inject StockService StockService
+@inject ItemService ItemService
+@inject IToastService ToastService
 
 @code {
     [Parameter] public EventCallback OnClose { get; set; }
-    [Parameter] public ItemModel? Item { get; set; }
+    [Parameter] public EventCallback OnItemUpdated { get; set; }
+    [Parameter] public ItemModel Item { get; set; }
+
+    private ItemModel updatedItem = new ItemModel();
+    private List<StockModel> stocks = new List<StockModel>();
+    private string? errorMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        stocks = await StockService.GetStocksAsync();
+        updatedItem = new ItemModel
+        {
+            ItemID = Item.ItemID,
+            ItemDescription = Item.ItemDescription,
+            Measure = Item.Measure,
+            SpoilDate = Item.SpoilDate,
+            StockID = Item.StockID,
+            Stock = Item.Stock
+        };
+    }
+
+    private async Task UpdateItem()
+    {
+        try
+        {
+            errorMessage = null; // Clear previous error messages
+
+            if (updatedItem.Measure <= 0)
+            {
+                errorMessage = "Measure is required.";
+                return;
+            }
+
+            if (updatedItem.SpoilDate.HasValue && updatedItem.SpoilDate.Value <= DateTime.Now)
+            {
+                errorMessage = "Spoil Date must be greater than today's date.";
+                return;
+            }
+
+            // Ensure the stock is set correctly
+            if (updatedItem.StockID > 0)
+            {
+                var selectedStock = stocks.FirstOrDefault(c => c.StockID == updatedItem.StockID);
+                if (selectedStock != null)
+                {
+                    updatedItem.Stock = new StockModel
+                    {
+                        StockID = selectedStock.StockID,
+                        Name = selectedStock.Name,
+                        Category = new CategoryModel
+                        {
+                            Name = "Name" // Hotfix: Category.Name is required, but we don't have it here.
+                        }
+                    };
+                }
+                else
+                {
+                    errorMessage = "Please select a valid stock.";
+                    return;
+                }
+            }
+            else
+            {
+                errorMessage = "Please select a stock.";
+                return;
+            }
+
+            @* // Manually construct JSON string with specific order
+            string jsonString = JsonSerializer.Serialize(new
+            {
+                itemID = updatedItem.ItemID,
+                itemDescription = updatedItem.ItemDescription,
+                spoilDate = updatedItem.SpoilDate,
+                measure = updatedItem.Measure,
+                stock = new
+                {
+                    name = updatedItem.Stock.Name,
+                    category = new
+                    {
+                        name = updatedItem.Stock.Category.Name
+                    }
+                },
+                stockID = updatedItem.StockID
+            });
+            Console.WriteLine(jsonString); // For debugging purposes *@
+
+            await ItemService.UpdateItemAsync(updatedItem);
+            ToastService.ShowSuccess("Item updated successfully.");
+            await OnItemUpdated.InvokeAsync(null);
+            await OnClose.InvokeAsync(null);
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating item: {ex.Message}";
+        }
+    }
 
     private async Task CloseModal()
     {
         if (OnClose.HasDelegate)
         {
             await OnClose.InvokeAsync(null);
+        }
+        if (OnItemUpdated.HasDelegate)
+        {
+            await OnItemUpdated.InvokeAsync(null);
         }
     }
 }
@@ -18,12 +122,52 @@
     <div class="modal-content" @onclick:stopPropagation="true">
         <button class="modal-close" @onclick="CloseModal">X</button>
         <h3>Update Item</h3>
-        <!-- Add your form or content here -->
-        <button @onclick="CloseModal">Close</button>
+        <EditForm Model="updatedItem" OnValidSubmit="UpdateItem">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <label for="itemid"><strong>ID</strong>:</label>
+                <InputNumber id="itemid" @bind-Value="updatedItem.ItemID" readonly/>
+            </div>
+            <div class="form-group">
+                <label for="stock"><strong>Stock</strong>:</label>
+                <InputSelect id="stock" @bind-Value="updatedItem.StockID" TValue="int">
+                    <option value="">Select a stock</option>
+                    @foreach (var stock in stocks)
+                    {
+                        <option value="@stock.StockID">@stock.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label for="description"><strong>Item Description</strong>:</label>
+                <InputText id="description" @bind-Value="updatedItem.ItemDescription" />
+            </div>
+            <div class="form-group">
+                <label for="measure"><strong>Measure*</strong>:</label>
+                <InputNumber id="measure" @bind-Value="updatedItem.Measure" />
+            </div>
+            <div class="form-group">
+                <label for="spoilDate"><strong>Spoil Date</strong>:</label>
+                <InputDate id="spoilDate" @bind-Value="updatedItem.SpoilDate" />
+            </div>
+            <!-- Add other fields as necessary -->
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-create"><strong>@(Item == null ? "CREATE" : "UPDATE")</strong></button>
+                <button type="button" class="btn btn-cancel" @onclick="CloseModal"><strong>CANCEL</strong></button>
+            </div>
+        </EditForm>
     </div>
 </div>
 
-<style>
+<style> 
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -45,7 +189,6 @@
         max-width: 600px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         position: relative;
-        z-index: 1001;
     }
 
     .modal-close {
@@ -56,5 +199,55 @@
         border: none;
         font-size: 1.5rem;
         cursor: pointer;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 10px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group input {
+        padding: 8px;
+        font-size: 1rem;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-create {
+        background-color: green;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: red;
+        color: white;
     }
 </style>

@@ -1,13 +1,94 @@
 @namespace Core_Service.UI.Components
+@using FoodStock.Models
+@inject ItemService ItemService
+@inject StockService StockService
+@inject IToastService ToastService
 
 @code {
     [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnItemCreated { get; set; }
+
+    private ItemModel newItem = new ItemModel();
+    private List<StockModel> stocks = new List<StockModel>();
+    private string? errorMessage;
+    private string? itemIdInput;
+
+    protected override async Task OnInitializedAsync()
+    {
+        stocks = await StockService.GetStocksAsync();
+    }
+
+    private async Task CreateItem()
+    {
+        try
+        {
+            errorMessage = null; // Clear previous error messages
+
+            if (!string.IsNullOrEmpty(itemIdInput) && int.TryParse(itemIdInput, out int itemId))
+            {
+                newItem.ItemID = itemId;
+            }
+
+            if (newItem.Measure <= 0)
+            {
+                errorMessage = "Measure is required.";
+                return;
+            }
+
+            if (newItem.SpoilDate.HasValue && newItem.SpoilDate.Value <= DateTime.Now)
+            {
+                errorMessage = "Spoil Date must be greater than today's date.";
+                return;
+            }
+
+            // Ensure the stock is set correctly
+            if (newItem.StockID > 0)
+            {
+                var selectedStock = stocks.FirstOrDefault(c => c.StockID == newItem.StockID);
+                if (selectedStock != null)
+                {
+                    newItem.Stock = new StockModel
+                    {
+                        StockID = selectedStock.StockID,
+                        Name = selectedStock.Name,
+                        Category = new CategoryModel
+                        {
+                            Name = "Name" // Hotfix: Category.Name is required, but we don't have it here.
+                        }
+                    };
+                }
+                else
+                {
+                    errorMessage = "Please select a valid stock.";
+                    return;
+                }
+            }
+            else
+            {
+                errorMessage = "Please select a stock.";
+                return;
+            }
+
+            await ItemService.CreateItemAsync(newItem);
+            ToastService.ShowSuccess("Item created successfully.");
+            await OnItemCreated.InvokeAsync(null);
+            await OnClose.InvokeAsync(null);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error creating item: {ex.Message}";
+        }
+    }
 
     private async Task CloseModal()
     {
         if (OnClose.HasDelegate)
         {
             await OnClose.InvokeAsync(null);
+        }
+        if (OnItemCreated.HasDelegate)
+        {
+            await OnItemCreated.InvokeAsync(null);
         }
     }
 }
@@ -16,8 +97,48 @@
     <div class="modal-content" @onclick:stopPropagation="true">
         <button class="modal-close" @onclick="CloseModal">X</button>
         <h3>Create New Item</h3>
-        <!-- Add your form or content here -->
-        <button @onclick="CloseModal">Close</button>
+        <EditForm Model="newItem" OnValidSubmit="CreateItem">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <label for="itemid"><strong>ID</strong>:</label>
+                <InputText type="number" id="itemid" @bind-Value="itemIdInput" placeholder="Leave blank to auto-generate." />
+            </div>
+            <div class="form-group">
+                <label for="stock"><strong>Stock</strong>:</label>
+                <InputSelect id="stock" @bind-Value="newItem.StockID" TValue="int">
+                    <option value="">Select a stock</option>
+                    @foreach (var stock in stocks)
+                    {
+                        <option value="@stock.StockID">@stock.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label for="description"><strong>Item Description</strong>:</label>
+                <InputText id="description" @bind-Value="newItem.ItemDescription" />
+            </div>
+            <div class="form-group">
+                <label for="measure"><strong>Measure*</strong>:</label>
+                <InputNumber id="measure" @bind-Value="newItem.Measure" />
+            </div>
+            <div class="form-group">
+                <label for="spoildate"><strong>Spoil Date</strong>:</label>
+                <InputDate id="spoildate" @bind-Value="newItem.SpoilDate" />
+            </div>
+            <!-- Add other fields as necessary -->
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-create"><strong>CREATE</strong></button>
+                <button type="button" class="btn btn-cancel" @onclick="CloseModal"><strong>CANCEL</strong></button>
+            </div>
+        </EditForm>
     </div>
 </div>
 
@@ -43,7 +164,6 @@
         max-width: 600px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         position: relative;
-        z-index: 1001;
     }
 
     .modal-close {
@@ -54,5 +174,55 @@
         border: none;
         font-size: 1.5rem;
         cursor: pointer;
+    }
+
+    .error-message {
+        color: red;
+        margin-bottom: 10px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group input {
+        padding: 8px;
+        font-size: 1rem;
+    }
+
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-create {
+        background-color: green;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: red;
+        color: white;
     }
 </style>
