@@ -14,30 +14,35 @@ public class StockService
     // Fetch all stocks from the API
     public async Task<List<StockModel>> GetStocksAsync()
     {
-        return await _httpClient.GetFromJsonAsync<List<StockModel>>("api/Stock");
+        var stocks = await _httpClient.GetFromJsonAsync<List<StockModel>>("api/Stock");
+        return stocks ?? new List<StockModel>();
     }
 
     // Fetch a single stock by ID from the API
-    public async Task<StockModel> GetStockByIdAsync(int id)
+    public async Task<StockModel?> GetStockByIdAsync(int id)
     {
-        return await _httpClient.GetFromJsonAsync<StockModel>($"api/Stock/{id}");
+        var stock = await _httpClient.GetFromJsonAsync<StockModel>($"api/Stock/{id}");
+        return stock;
     }
 
     // Create a new stock via the API
-    public async Task CreateStockAsync(StockModel stock)
+    public async Task<bool> CreateStockAsync(StockModel stock)
     {
-        await _httpClient.PostAsJsonAsync("api/Stock", stock);
+        var response = await _httpClient.PostAsJsonAsync("api/Stock", stock);
+        return response.IsSuccessStatusCode;
     }
 
     // Update an existing stock via the API
-    public async Task UpdateStockAsync(StockModel stock)
+    public async Task<bool> UpdateStockAsync(StockModel stock)
     {
-        await _httpClient.PutAsJsonAsync($"api/Stock/{stock.StockID}", stock);
+        var response = await _httpClient.PutAsJsonAsync($"api/Stock/{stock.StockID}", stock);
+        return response.IsSuccessStatusCode;
     }
 
     // Delete a stock by ID via the API
-    public async Task DeleteStockAsync(int id)
+    public async Task<bool> DeleteStockAsync(int id)
     {
-        await _httpClient.DeleteAsync($"api/Stock/{id}");
+        var response = await _httpClient.DeleteAsync($"api/Stock/{id}");
+        return response.IsSuccessStatusCode;
     }
 }
