@@ -1,0 +1,28 @@
+services:
+  core-service-api:
+    build:
+      context: .
+      dockerfile: ./Core-Service.API/Dockerfile
+    ports:
+      - "8110:8110"
+    networks:
+      - core-service-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    image: core-service-api:latest
+
+  core-service-ui:
+    build:
+      context: .
+      dockerfile: ./Core-Service.UI/Dockerfile
+    ports:
+      - "8120:8120"
+    networks:
+      - core-service-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    image: core-service-ui:latest
+
+networks:
+  core-service-network:
+    driver: bridge

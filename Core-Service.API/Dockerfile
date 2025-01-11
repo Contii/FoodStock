@@ -2,24 +2,26 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 # set the working directory in the container to /app
 WORKDIR /app
+RUN chmod -R +x /app
 
 
 # copy the project files to the working directory ("*.sln" means move all files with the .sln extension while "." means the root folder inside the container)
-COPY *.sln .
+COPY Core-Service.API.sln .
 # Model/*.csproj means move all files with the .csproj extension in the Models folder inside the container
-COPY Models/*.csproj ./Models/
-COPY Persistence/*.csproj ./Persistence/
-COPY WebAPI/*.csproj ./WebAPI/
+COPY Models/Models.csproj ./Models/
+COPY Persistence/Persistence.csproj ./Persistence/
+COPY Core-Service.API/Core-Service.API.csproj ./Core-Service.API/
 # restore all NuGet packages, including the project file
-RUN dotnet restore
+RUN ls -l /app
+RUN dotnet restore Core-Service.API.sln
 
 
 # copy the remaining files to the working directory of the container
 COPY Models/. ./Models/
 COPY Persistence/. ./Persistence/
-COPY WebAPI/. ./WebAPI/
+COPY Core-Service.API/. ./Core-Service.API/
 # build and publish the application using the Release configuration
-WORKDIR /app/WebAPI
+WORKDIR /app/Core-Service.API
 RUN dotnet publish -c Release -o out
 
 
@@ -27,9 +29,10 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 # set the working directory in the container
 WORKDIR /app
-# set the ASPNETCORE_URLS environment variable to use port 80
-ENV ASPNETCORE_URLS=http://+:80
+# set the ASPNETCORE_URLS environment variable to use port 8110
+ENV ASPNETCORE_URLS=http://+:8110
 # copy the published application to the container
-COPY --from=build /app/WebAPI/out ./
+COPY --from=build /app/Core-Service.API/out ./
+
 # set the default command to run when the container starts
-ENTRYPOINT ["dotnet", "WebAPI.dll"]
+ENTRYPOINT ["dotnet", "Core-Service.API.dll"]
