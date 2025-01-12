@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(EFCoreContext))]
-    [Migration("20250120194957_UpdatedCoreModels")]
-    partial class UpdatedCoreModels
+    [Migration("20250130211634_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
