@@ -24,7 +24,7 @@ COPY --from=build /app/publish/wwwroot .
 COPY Core-Service.UI/nginx.conf /etc/nginx/nginx.conf
 COPY Core-Service.UI/myapp.conf /etc/nginx/conf.d/
 
-# Expose port 80
+# Expose port 80 internally to use nginx server to serve the app
 EXPOSE 80
 
 # Start Nginx

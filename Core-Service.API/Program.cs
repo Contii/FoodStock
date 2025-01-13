@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("http://localhost:8120") //.AllowAnyOrigin() // .WithOrigins("http://localhost:8162", "http://localhost:8163") // frontend URL
+        builder.AllowAnyOrigin() // .WithOrigins("http://localhost:8162", "http://localhost:8163") // frontend URL
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
@@ -52,6 +52,6 @@ app.MapControllers();
 
 // Configure the application to listen on a specific port
 //app.Urls.Add("https://localhost:8171");
-app.Urls.Add("http://localhost:8110");
+//app.Urls.Add("http://localhost:8050");
 
 app.Run();

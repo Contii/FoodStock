@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: ./Core-Service.API/Dockerfile
     ports:
-      - "8110:8110"
+      - "8050:8050"
     networks:
       - core-service-network
     environment:
@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: ./Core-Service.UI/Dockerfile
     ports:
-      - "8120:8120"
+      - "8060:80"
     networks:
       - core-service-network
     environment:

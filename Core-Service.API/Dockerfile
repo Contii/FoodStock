@@ -29,8 +29,8 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 # set the working directory in the container
 WORKDIR /app
-# set the ASPNETCORE_URLS environment variable to use port 8110
-ENV ASPNETCORE_URLS=http://+:8110
+# set the ASPNETCORE_URLS environment variable to use port 8050
+ENV ASPNETCORE_URLS=http://+:8050
 # copy the published application to the container
 COPY --from=build /app/Core-Service.API/out ./
 
