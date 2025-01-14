@@ -17,28 +17,27 @@ public class ShoppingListModel
 
     [Required]
     [JsonIgnore]
-    public List<ShoppingItem>? ShoppingItens { get; set; }
+    public List<ShoppingItemModel> ShoppingItens { get; set; }
     
 
-    public ShoppingListModel(int shoppingListID, string name, string description, DateTime shoppingDate, ShoppingStatusEnum status)
+    public ShoppingListModel(int shoppingListID, string name, DateTime shoppingDate, ShoppingStatusEnum status, List<ShoppingItemModel> shoppingItens)
     {
         ShoppingListID = shoppingListID;
         Name = name;
-        Description = description;
         ShoppingDate = shoppingDate;
         Status = status;
-        ShoppingItens = new List<ShoppingItem>();
+        ShoppingItens = shoppingItens;
     }
 
     public ShoppingListModel() 
     {
-        ShoppingItens = new List<ShoppingItem>(); // A good practice For required lists, avoids null reference exceptions when adding items.
+        ShoppingItens = new List<ShoppingItemModel>(); // A good practice For required lists, avoids null reference exceptions when adding items.
         Name = string.Empty; // For required strings, a good practice to initialize them with an empty string.
     }
 
     public override string ToString()
     {
-        return $"[{ShoppingListID}, {Name}, {Description}]";
+        return $"[{ShoppingListID}, {ShoppingDate}, {Status}]";
     }
 
     public override bool Equals(object? obj)
