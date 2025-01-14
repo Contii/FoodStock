@@ -26,6 +26,21 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ShoppingLists",
+                columns: table => new
+                {
+                    ShoppingListID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    ShoppingDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShoppingLists", x => x.ShoppingListID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Stocks",
                 columns: table => new
                 {
@@ -78,9 +93,46 @@ namespace Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ShoppingItems",
+                columns: table => new
+                {
+                    ShoppingItemID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Measure = table.Column<float>(type: "REAL", nullable: false),
+                    StockID = table.Column<int>(type: "INTEGER", nullable: false),
+                    ShoppingListID = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShoppingItems", x => x.ShoppingItemID);
+                    table.ForeignKey(
+                        name: "FK_ShoppingItems_ShoppingLists_ShoppingListID",
+                        column: x => x.ShoppingListID,
+                        principalTable: "ShoppingLists",
+                        principalColumn: "ShoppingListID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ShoppingItems_Stocks_StockID",
+                        column: x => x.StockID,
+                        principalTable: "Stocks",
+                        principalColumn: "StockID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Items_StockID",
                 table: "Items",
+                column: "StockID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShoppingItems_ShoppingListID",
+                table: "ShoppingItems",
+                column: "ShoppingListID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShoppingItems_StockID",
+                table: "ShoppingItems",
                 column: "StockID");
 
             migrationBuilder.CreateIndex(
@@ -99,6 +151,12 @@ namespace Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Items");
+
+            migrationBuilder.DropTable(
+                name: "ShoppingItems");
+
+            migrationBuilder.DropTable(
+                name: "ShoppingLists");
 
             migrationBuilder.DropTable(
                 name: "Stocks");

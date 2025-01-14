@@ -8,9 +8,11 @@ public class EFCoreContext : DbContext
     public DbSet<CategoryModel>  Categories { get; set; }
     public DbSet<ItemModel> Items { get; set; }
     public DbSet<StockModel> Stocks { get; set; }
+    public DbSet<ShoppingItemModel> ShoppingItems { get; set; }
+    public DbSet<ShoppingListModel> ShoppingLists { get; set; }
 
-    public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
-    //public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
+    //public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
+    public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
     {    
     }
 
@@ -60,6 +62,32 @@ public class EFCoreContext : DbContext
             eb.HasOne(p => p.Stock)
                 .WithMany(s => s.Items)
                 .HasForeignKey(p => p.StockID)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ShoppingItemModel>(eb =>
+        {
+            eb.HasKey(pk => pk.ShoppingItemID);
+            eb.Property(p => p.Measure).IsRequired();
+            eb.HasOne(p => p.Stock)
+                .WithMany()
+                .HasForeignKey(p => p.StockID)
+                .OnDelete(DeleteBehavior.Cascade); // If a stock is deleted, the shopping item will also be deleted
+            eb.HasOne(p => p.ShoppingList)
+                .WithMany(s => s.ShoppingItens)
+                .HasForeignKey(p => p.ShoppingListID)
+                .OnDelete(DeleteBehavior.Cascade); // If a shopping list is deleted, the shopping item will also be deleted
+        });
+
+        modelBuilder.Entity<ShoppingListModel>(eb =>
+        {
+            eb.HasKey(pk => pk.ShoppingListID);
+            eb.Property(p => p.Name).IsRequired();
+            eb.Property(p => p.ShoppingDate);
+            eb.Property(p => p.Status).IsRequired();
+            eb.HasMany(p => p.ShoppingItens)
+                .WithOne(p => p.ShoppingList)
+                .HasForeignKey(p => p.ShoppingListID)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

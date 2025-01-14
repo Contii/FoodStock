@@ -62,6 +62,51 @@ namespace Persistence.Migrations
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("FoodStock.Models.ShoppingItemModel", b =>
+                {
+                    b.Property<int>("ShoppingItemID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("Measure")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("ShoppingListID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("StockID")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ShoppingItemID");
+
+                    b.HasIndex("ShoppingListID");
+
+                    b.HasIndex("StockID");
+
+                    b.ToTable("ShoppingItems");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.ShoppingListModel", b =>
+                {
+                    b.Property<int>("ShoppingListID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ShoppingDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ShoppingListID");
+
+                    b.ToTable("ShoppingLists");
+                });
+
             modelBuilder.Entity("FoodStock.Models.StockModel", b =>
                 {
                     b.Property<int>("StockID")
@@ -114,6 +159,25 @@ namespace Persistence.Migrations
                     b.Navigation("Stock");
                 });
 
+            modelBuilder.Entity("FoodStock.Models.ShoppingItemModel", b =>
+                {
+                    b.HasOne("FoodStock.Models.ShoppingListModel", "ShoppingList")
+                        .WithMany("ShoppingItens")
+                        .HasForeignKey("ShoppingListID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FoodStock.Models.StockModel", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShoppingList");
+
+                    b.Navigation("Stock");
+                });
+
             modelBuilder.Entity("FoodStock.Models.StockModel", b =>
                 {
                     b.HasOne("FoodStock.Models.CategoryModel", "Category")
@@ -131,6 +195,11 @@ namespace Persistence.Migrations
             modelBuilder.Entity("FoodStock.Models.CategoryModel", b =>
                 {
                     b.Navigation("Stocks");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.ShoppingListModel", b =>
+                {
+                    b.Navigation("ShoppingItens");
                 });
 
             modelBuilder.Entity("FoodStock.Models.StockModel", b =>
