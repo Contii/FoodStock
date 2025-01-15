@@ -94,7 +94,7 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ShoppingItems",
+                name: "ShoppingItens",
                 columns: table => new
                 {
                     ShoppingItemID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -105,15 +105,15 @@ namespace Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShoppingItems", x => x.ShoppingItemID);
+                    table.PrimaryKey("PK_ShoppingItens", x => x.ShoppingItemID);
                     table.ForeignKey(
-                        name: "FK_ShoppingItems_ShoppingLists_ShoppingListID",
+                        name: "FK_ShoppingItens_ShoppingLists_ShoppingListID",
                         column: x => x.ShoppingListID,
                         principalTable: "ShoppingLists",
                         principalColumn: "ShoppingListID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ShoppingItems_Stocks_StockID",
+                        name: "FK_ShoppingItens_Stocks_StockID",
                         column: x => x.StockID,
                         principalTable: "Stocks",
                         principalColumn: "StockID",
@@ -126,13 +126,13 @@ namespace Persistence.Migrations
                 column: "StockID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShoppingItems_ShoppingListID",
-                table: "ShoppingItems",
+                name: "IX_ShoppingItens_ShoppingListID",
+                table: "ShoppingItens",
                 column: "ShoppingListID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ShoppingItems_StockID",
-                table: "ShoppingItems",
+                name: "IX_ShoppingItens_StockID",
+                table: "ShoppingItens",
                 column: "StockID");
 
             migrationBuilder.CreateIndex(
@@ -153,7 +153,7 @@ namespace Persistence.Migrations
                 name: "Items");
 
             migrationBuilder.DropTable(
-                name: "ShoppingItems");
+                name: "ShoppingItens");
 
             migrationBuilder.DropTable(
                 name: "ShoppingLists");

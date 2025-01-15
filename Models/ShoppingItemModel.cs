@@ -37,8 +37,12 @@ public class ShoppingItemModel
     public ShoppingItemModel() 
     {
         Stock = new StockModel(); // Initialize with a default value
+        Stock.Name = "name"; // For required strings, its a good practice to initialize them with a disposable string.
+        Stock.Category.Name = "name";
         StockID = Stock.StockID; // Ensure StockID is set correctly
+
         ShoppingList = new ShoppingListModel(); // Initialize with a default value  
+        ShoppingList.Name = "name";
         ShoppingListID = ShoppingList.ShoppingListID; // Ensure ShoppingListID is set correctly
     }
 

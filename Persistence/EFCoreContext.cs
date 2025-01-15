@@ -8,11 +8,11 @@ public class EFCoreContext : DbContext
     public DbSet<CategoryModel>  Categories { get; set; }
     public DbSet<ItemModel> Items { get; set; }
     public DbSet<StockModel> Stocks { get; set; }
-    public DbSet<ShoppingItemModel> ShoppingItems { get; set; }
+    public DbSet<ShoppingItemModel> ShoppingItens { get; set; }
     public DbSet<ShoppingListModel> ShoppingLists { get; set; }
 
-    //public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
-    public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
+    public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
+    //public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
     {    
     }
 

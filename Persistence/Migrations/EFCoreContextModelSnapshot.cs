@@ -83,7 +83,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("StockID");
 
-                    b.ToTable("ShoppingItems");
+                    b.ToTable("ShoppingItens");
                 });
 
             modelBuilder.Entity("FoodStock.Models.ShoppingListModel", b =>

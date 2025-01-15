@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(EFCoreContext))]
-    [Migration("20250215070000_InitialCreate")]
+    [Migration("20250215085348_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -86,7 +86,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("StockID");
 
-                    b.ToTable("ShoppingItems");
+                    b.ToTable("ShoppingItens");
                 });
 
             modelBuilder.Entity("FoodStock.Models.ShoppingListModel", b =>
