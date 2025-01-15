@@ -6,10 +6,22 @@ services:
     ports:
       - "8050:8050"
     networks:
-      - core-service-network
+      - foodstock-network
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     image: core-service-api:latest
+
+  shopping-service-api:
+    build:
+      context: .
+      dockerfile: ./Shopping-Service.API/Dockerfile
+    ports:
+      - "8060:8060"
+    networks:
+      - foodstock-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    image: shopping-service-api:latest
 
   core-service-ui:
     build:
@@ -18,11 +30,11 @@ services:
     ports:
       - "8060:80"
     networks:
-      - core-service-network
+      - foodstock-network
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     image: core-service-ui:latest
 
 networks:
-  core-service-network:
+  foodstock-network:
     driver: bridge
