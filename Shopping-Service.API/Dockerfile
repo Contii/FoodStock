@@ -30,9 +30,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 # set the working directory in the container
 WORKDIR /app
 # set the ASPNETCORE_URLS environment variable to use port 8060
-ENV ASPNETCORE_URLS=http://+:8060
+ENV ASPNETCORE_URLS=http://+:8070
 # copy the published application to the container
-COPY --from=build /app/Core-Service.API/out ./
+COPY --from=build /app/Shopping-Service.API/out ./
 
 # set the default command to run when the container starts
 ENTRYPOINT ["dotnet", "Shopping-Service.API.dll"]

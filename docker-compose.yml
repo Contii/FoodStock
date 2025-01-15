@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: ./Shopping-Service.API/Dockerfile
     ports:
-      - "8060:8060"
+      - "8070:8070"
     networks:
       - foodstock-network
     environment:
