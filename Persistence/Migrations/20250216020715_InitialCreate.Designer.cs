@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(EFCoreContext))]
-    [Migration("20250215085348_InitialCreate")]
+    [Migration("20250216020715_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,6 +37,28 @@ namespace Persistence.Migrations
                     b.HasKey("CategoryID");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.ConsumptionModel", b =>
+                {
+                    b.Property<int>("ConsumptionID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ConsumptionDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("StockID")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ConsumptionID");
+
+                    b.HasIndex("StockID");
+
+                    b.ToTable("Consumptions");
                 });
 
             modelBuilder.Entity("FoodStock.Models.ItemModel", b =>
@@ -149,6 +171,17 @@ namespace Persistence.Migrations
                     b.HasIndex("CategoryModelCategoryID");
 
                     b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.ConsumptionModel", b =>
+                {
+                    b.HasOne("FoodStock.Models.StockModel", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("FoodStock.Models.ItemModel", b =>

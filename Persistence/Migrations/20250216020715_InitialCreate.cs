@@ -72,6 +72,27 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Consumptions",
+                columns: table => new
+                {
+                    ConsumptionID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Quantity = table.Column<float>(type: "REAL", nullable: false),
+                    ConsumptionDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    StockID = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Consumptions", x => x.ConsumptionID);
+                    table.ForeignKey(
+                        name: "FK_Consumptions_Stocks_StockID",
+                        column: x => x.StockID,
+                        principalTable: "Stocks",
+                        principalColumn: "StockID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Items",
                 columns: table => new
                 {
@@ -121,6 +142,11 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Consumptions_StockID",
+                table: "Consumptions",
+                column: "StockID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Items_StockID",
                 table: "Items",
                 column: "StockID");
@@ -149,6 +175,9 @@ namespace Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Consumptions");
+
             migrationBuilder.DropTable(
                 name: "Items");
 
