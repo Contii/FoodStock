@@ -1,4 +1,17 @@
 services:
+
+  core-service-ui:
+    build:
+      context: .
+      dockerfile: ./Core-Service.UI/Dockerfile
+    ports:
+      - "8060:80"
+    networks:
+      - foodstock-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    image: core-service-ui:latest
+    
   core-service-api:
     build:
       context: .
@@ -23,17 +36,17 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     image: shopping-service-api:latest
 
-  core-service-ui:
+  consumption-service-api:
     build:
       context: .
-      dockerfile: ./Core-Service.UI/Dockerfile
+      dockerfile: ./Consumption-Service.API/Dockerfile
     ports:
-      - "8060:80"
+      - "8075:8075"
     networks:
       - foodstock-network
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    image: core-service-ui:latest
+    image: consumption-service-api:latest
 
 networks:
   foodstock-network:
