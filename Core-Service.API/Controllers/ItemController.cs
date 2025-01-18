@@ -82,28 +82,23 @@ namespace FoodStock.Core_Service.API.Controllers
             var stock = await _context.Stocks.FindAsync(updatedItem.StockID); // Verify if the stock exists.
             if (stock == null) return BadRequest("Invalid StockID");
 
-            // Detach the existing stock to avoid tracking conflicts
-            _context.Entry(stock).State = EntityState.Detached;
-            item.Stock = null; // Set the stock to null to avoid re-adding it
-
+            _context.Entry(stock).State = EntityState.Unchanged; // Ensure the existing stock is used and not recreated
             var oldMeasure = item.Measure; // Store the old measure to update the stock quantity later.
 
+            // === Update the item properties ===
             item.ItemDescription = updatedItem.ItemDescription;
             item.SpoilDate = updatedItem.SpoilDate;
             item.Measure = updatedItem.Measure;
             item.StockID = updatedItem.StockID;
-            item.Stock = updatedItem.Stock;
+            item.Stock = stock; // Ensure the existing stock is used
 
             _context.Items.Update(item);
             await _context.SaveChangesAsync();
-            
-            stock = await _context.Stocks.FindAsync(item.StockID); // retrieve the stock to update.
-            var stockController = new StockController(_context); // Create an instance of StockController.
+            // =================================
 
-            stock.Quantity += item.Measure - oldMeasure; // Update the new stock quantity
-
-            var updateStockResult = await stockController.UpdateStock(stock.StockID, stock); // Call and await the UpdateStock method.
-
+            // === Update the stock quantity ===
+            stock.Quantity = stock.Quantity - oldMeasure + item.Measure; // Update the new stock quantity
+            var updateStockResult = await new StockController(_context).UpdateStock(stock.StockID, stock); // Call and await the UpdateStock method.
             if (updateStockResult is OkObjectResult okResult && okResult.Value is StockModel updatedStock)
             {
                 stock = updatedStock;
@@ -112,6 +107,31 @@ namespace FoodStock.Core_Service.API.Controllers
             {
                 return BadRequest("Failed to update stock");
             }
+            // =================================
+
+
+            // == Create a new Consumption entry ==
+            if (item.Measure < oldMeasure)
+            {
+                try
+                {
+                    var consumption = new ConsumptionModel
+                    {
+                        Quantity = oldMeasure - item.Measure,
+                        ConsumptionDate = DateTime.Today,
+                        StockID = item.StockID,
+                        Stock = stock
+                    };
+
+                    _context.Consumptions.Add(consumption);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest($"Failed to create consumption: {ex.Message}");
+                }
+            }
+            // =================================
 
             return Ok(item);
         }
@@ -139,6 +159,25 @@ namespace FoodStock.Core_Service.API.Controllers
             else
             {
                 return BadRequest("Failed to update stock");
+            }
+
+            // Create a new Consumption entry
+            try
+            {
+                var consumption = new ConsumptionModel
+                {
+                    Quantity = item.Measure,
+                    ConsumptionDate = DateTime.UtcNow,
+                    StockID = item.StockID,
+                    Stock = stock
+                };
+
+                _context.Consumptions.Add(consumption);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to create consumption: {ex.Message}");
             }
 
             return NoContent();
