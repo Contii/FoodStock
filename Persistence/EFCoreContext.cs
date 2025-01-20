@@ -1,4 +1,5 @@
 using FoodStock.Models;
+using FoodStock.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodStock.Persistence;
@@ -104,5 +105,23 @@ public class EFCoreContext : DbContext
         });
 
         base.OnModelCreating(modelBuilder); // Call the base method to apply the changes.
+    }
+    public override int SaveChanges()
+    {
+        var modifiedEntities = ChangeTracker.Entries<ISubject>() // Get all modified entities that implement ISubject.
+            .Where(e => e.State == EntityState.Modified)
+            .ToList();
+
+        foreach (var entry in modifiedEntities)
+        {
+            var oldState = new
+            {
+                // Get the old state of the entity.
+            };
+            var stock = entry.Entity;
+            stock.Notify(oldState);
+        }
+
+        return base.SaveChanges();
     }
 }
