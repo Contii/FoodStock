@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using FoodStock.Models.Interfaces;
 
 namespace FoodStock.Models;
 
-public class StockModel
+public class StockModel : ISubject
 {
+    private readonly List<IObserver> _observers = new List<IObserver>();
+
     public int StockID { get; set; }
 
     [Required]
@@ -70,5 +73,24 @@ public class StockModel
     public override int GetHashCode()
     {
         return StockID.GetHashCode();
+    }
+
+    // Observer pattern
+    public void Attach(IObserver observer)
+    {
+        _observers.Add(observer);
+    }
+
+    public void Detach(IObserver observer)
+    {
+        _observers.Remove(observer);
+    }
+
+    public void Notify(object oldState)
+    {
+        foreach (var observer in _observers)
+        {
+            observer.Update(this, oldState);
+        }
     }
 }

@@ -108,15 +108,17 @@ public class EFCoreContext : DbContext
     }
     public override int SaveChanges()
     {
-        var modifiedEntities = ChangeTracker.Entries<ISubject>() // Get all modified entities that implement ISubject.
+        var modifiedStocks = ChangeTracker.Entries<StockModel>()
             .Where(e => e.State == EntityState.Modified)
             .ToList();
 
-        foreach (var entry in modifiedEntities)
+        foreach (var entry in modifiedStocks)
         {
             var oldState = new
             {
-                // Get the old state of the entity.
+                Quantity = entry.OriginalValues.GetValue<int>("Quantity"),
+                MinQuantity = entry.OriginalValues.GetValue<int>("MinQuantity"),
+                MaxQuantity = entry.OriginalValues.GetValue<int>("MaxQuantity")
             };
             var stock = entry.Entity;
             stock.Notify(oldState);
