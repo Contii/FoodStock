@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shopping-Service.API", "Shopping-Service.API\Shopping-Service.API.csproj", "{8F085C8B-0E20-4D12-868C-0BDAE0619D0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{DF94792E-0A8D-4936-884F-93E9C9F17D19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{8F085C8B-0E20-4D12-868C-0BDAE0619D0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F085C8B-0E20-4D12-868C-0BDAE0619D0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F085C8B-0E20-4D12-868C-0BDAE0619D0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF94792E-0A8D-4936-884F-93E9C9F17D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF94792E-0A8D-4936-884F-93E9C9F17D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF94792E-0A8D-4936-884F-93E9C9F17D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF94792E-0A8D-4936-884F-93E9C9F17D19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
