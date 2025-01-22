@@ -4,6 +4,6 @@ namespace FoodStock.Common.Interfaces
     {
         void Attach(IObserver observer);
         void Detach(IObserver observer);
-        void Notify(object oldState);
+        void Notify(float oldQuantity);
     }
 }
