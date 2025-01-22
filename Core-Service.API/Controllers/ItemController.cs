@@ -110,28 +110,28 @@ namespace FoodStock.Core_Service.API.Controllers
             // =================================
 
 
-            // == Create a new Consumption entry ==
-            if (item.Measure < oldMeasure)
-            {
-                try
-                {
-                    var consumption = new ConsumptionModel
-                    {
-                        Quantity = oldMeasure - item.Measure,
-                        ConsumptionDate = DateTime.Today,
-                        StockID = item.StockID,
-                        Stock = stock
-                    };
+            // // == Create a new Consumption entry ==
+            // if (item.Measure < oldMeasure)
+            // {
+            //     try
+            //     {
+            //         var consumption = new ConsumptionModel
+            //         {
+            //             Quantity = oldMeasure - item.Measure,
+            //             ConsumptionDate = DateTime.Today,
+            //             StockID = item.StockID,
+            //             Stock = stock
+            //         };
 
-                    _context.Consumptions.Add(consumption);
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest($"Failed to create consumption: {ex.Message}");
-                }
-            }
-            // =================================
+            //         _context.Consumptions.Add(consumption);
+            //         await _context.SaveChangesAsync();
+            //     }
+            //     catch (Exception ex)
+            //     {
+            //         return BadRequest($"Failed to create consumption: {ex.Message}");
+            //     }
+            // }
+            // // =================================
 
             return Ok(item);
         }
