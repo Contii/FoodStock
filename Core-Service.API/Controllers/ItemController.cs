@@ -107,31 +107,6 @@ namespace FoodStock.Core_Service.API.Controllers
             {
                 return BadRequest("Failed to update stock");
             }
-            // =================================
-
-
-            // // == Create a new Consumption entry ==
-            // if (item.Measure < oldMeasure)
-            // {
-            //     try
-            //     {
-            //         var consumption = new ConsumptionModel
-            //         {
-            //             Quantity = oldMeasure - item.Measure,
-            //             ConsumptionDate = DateTime.Today,
-            //             StockID = item.StockID,
-            //             Stock = stock
-            //         };
-
-            //         _context.Consumptions.Add(consumption);
-            //         await _context.SaveChangesAsync();
-            //     }
-            //     catch (Exception ex)
-            //     {
-            //         return BadRequest($"Failed to create consumption: {ex.Message}");
-            //     }
-            // }
-            // // =================================
 
             return Ok(item);
         }
