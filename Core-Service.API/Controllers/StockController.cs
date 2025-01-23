@@ -1,7 +1,9 @@
 using FoodStock.Models;
 using FoodStock.Persistence;
+using FoodStock.Persistence.Observers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace FoodStock.Core_Service.API.Controllers
 {
@@ -54,6 +56,14 @@ namespace FoodStock.Core_Service.API.Controllers
             stock.Items = new List<ItemModel>(); // Ensure the Items list is initialized as empty
             _context.Stocks.Add(stock); // Add the new stock to the context.
             await _context.SaveChangesAsync(); // Save the changes to the database.
+
+            // ===== Notify the observer with the new stock state =====
+            var stockObserver = new StockObserver(_context); // Create an instance of StockObserver.
+            stock.Attach(stockObserver); // Attach the observer to the stock.
+            stock.Notify(stock.Quantity); // Notify the observer with the new stock state
+            await _context.SaveChangesAsync(); // Save the changes to the database.
+            // ========================================================
+
             return CreatedAtAction(nameof(GetStock), new { id = stock.StockID }, stock);
         }
 
@@ -68,6 +78,9 @@ namespace FoodStock.Core_Service.API.Controllers
 
             var stock = await _context.Stocks.Include(s => s.Category).Include(s => s.Items).FirstOrDefaultAsync(s => s.StockID == id); // Verify if the stock exists.
             if (stock == null) return NotFound();
+
+            // Store the old quantity to notify the observer
+            var oldQuantity = stock.Quantity;
 
             if (updatedStock.CategoryID.HasValue)
             {
@@ -89,7 +102,14 @@ namespace FoodStock.Core_Service.API.Controllers
             stock.MaxQuantity = updatedStock.MaxQuantity;
             stock.MeasureType = updatedStock.MeasureType;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save the changes before notifying observer.
+
+            // ===== Notify the observer with the old and new stock state =====
+            var stockObserver = new StockObserver(_context); // Create an instance of StockObserver.
+            stock.Attach(stockObserver); // Attach the observer to the stock.
+            stock.Notify(oldQuantity); // Notify the observer with the old stock state
+            // ========================================================
+
             return Ok(stock);
         }
 
