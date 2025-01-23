@@ -1,6 +1,8 @@
 using FoodStock.Models;
-using FoodStock.Models.Interfaces;
+using FoodStock.Common.Interfaces;
+using FoodStock.Persistence.Observers;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FoodStock.Persistence;
 
@@ -114,14 +116,9 @@ public class EFCoreContext : DbContext
 
         foreach (var entry in modifiedStocks)
         {
-            var oldState = new
-            {
-                Quantity = entry.OriginalValues.GetValue<int>("Quantity"),
-                MinQuantity = entry.OriginalValues.GetValue<int>("MinQuantity"),
-                MaxQuantity = entry.OriginalValues.GetValue<int>("MaxQuantity")
-            };
+            var oldQuantity = entry.OriginalValues.GetValue<float>("Quantity");
             var stock = entry.Entity;
-            stock.Notify(oldState);
+            stock.Notify(oldQuantity);
         }
 
         return base.SaveChanges();

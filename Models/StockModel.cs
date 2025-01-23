@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using FoodStock.Models.Interfaces;
+using FoodStock.Common.Interfaces;
+using System.Collections.Generic;
 
 namespace FoodStock.Models;
 
@@ -86,11 +87,11 @@ public class StockModel : ISubject
         _observers.Remove(observer);
     }
 
-    public void Notify(object oldState)
-    {
-        foreach (var observer in _observers)
+        public void Notify(float oldQuantity)
         {
-            observer.Update(this, oldState);
+            foreach (var observer in _observers)
+            {
+                observer.Update(this, oldQuantity);
+            }
         }
-    }
 }
