@@ -12,7 +12,7 @@ public class StockReportModel
     public ReportTypeEnum ReportType { get; set; }
 
     [JsonIgnore]
-    public List<StockModel> Stocks { get; set; } = new List<StockModel>();
+    public List<StockModel> Stocks { get; set; } = new List<StockModel>(); // Initialize with a default value
 
     public StockReportModel(int StockReportID, ReportTypeEnum ReportType, List<StockModel> Stocks)
     {
@@ -23,7 +23,6 @@ public class StockReportModel
 
     public StockReportModel()
     {
-        Stocks = new List<StockModel>(); // A good practice For required lists, avoids null reference exceptions when adding items.
     }
 
     public override string ToString()

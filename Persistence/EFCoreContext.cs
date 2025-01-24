@@ -14,9 +14,10 @@ public class EFCoreContext : DbContext
     public DbSet<ShoppingItemModel> ShoppingItens { get; set; }
     public DbSet<ShoppingListModel> ShoppingLists { get; set; }
     public DbSet<ConsumptionModel> Consumptions { get; set; }
+    public DbSet<StockReportModel> StockReports { get; set; }
 
-    public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
-    // public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
+    // public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
+    public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
     {    
     }
 
@@ -105,6 +106,15 @@ public class EFCoreContext : DbContext
                 .HasForeignKey(p => p.StockID)
                 .OnDelete(DeleteBehavior.Cascade); // If a stock is deleted, the consumption will also be deleted
         });
+
+            modelBuilder.Entity<StockReportModel>(eb =>
+            {
+                eb.HasKey(pk => pk.StockReportID);
+                eb.Property(p => p.ReportType).IsRequired();
+                eb.HasMany(p => p.Stocks)
+                    .WithOne()
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
         base.OnModelCreating(modelBuilder); // Call the base method to apply the changes.
     }
