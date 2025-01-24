@@ -87,11 +87,11 @@ public class StockModel : ISubject
         _observers.Remove(observer);
     }
 
-        public void Notify(float oldQuantity)
+    public void Notify(float oldQuantity)
+    {
+        foreach (var observer in _observers)
         {
-            foreach (var observer in _observers)
-            {
-                observer.Update(this, oldQuantity);
-            }
+            observer.Update(this, oldQuantity);
         }
+    }
 }
