@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(EFCoreContext))]
-    [Migration("20250216020715_InitialCreate")]
+    [Migration("20250217185244_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -164,13 +164,32 @@ namespace Persistence.Migrations
                     b.Property<float>("Quantity")
                         .HasColumnType("REAL");
 
+                    b.Property<int?>("StockReportModelStockReportID")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("StockID");
 
                     b.HasIndex("CategoryID");
 
                     b.HasIndex("CategoryModelCategoryID");
 
+                    b.HasIndex("StockReportModelStockReportID");
+
                     b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.StockReportModel", b =>
+                {
+                    b.Property<int>("StockReportID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReportType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("StockReportID");
+
+                    b.ToTable("StockReports");
                 });
 
             modelBuilder.Entity("FoodStock.Models.ConsumptionModel", b =>
@@ -225,6 +244,11 @@ namespace Persistence.Migrations
                         .WithMany("Stocks")
                         .HasForeignKey("CategoryModelCategoryID");
 
+                    b.HasOne("FoodStock.Models.StockReportModel", null)
+                        .WithMany("Stocks")
+                        .HasForeignKey("StockReportModelStockReportID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("Category");
                 });
 
@@ -241,6 +265,11 @@ namespace Persistence.Migrations
             modelBuilder.Entity("FoodStock.Models.StockModel", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.StockReportModel", b =>
+                {
+                    b.Navigation("Stocks");
                 });
 #pragma warning restore 612, 618
         }

@@ -41,6 +41,19 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "StockReports",
+                columns: table => new
+                {
+                    StockReportID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ReportType = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StockReports", x => x.StockReportID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Stocks",
                 columns: table => new
                 {
@@ -53,7 +66,8 @@ namespace Persistence.Migrations
                     MaxQuantity = table.Column<int>(type: "INTEGER", nullable: false),
                     MeasureType = table.Column<int>(type: "INTEGER", nullable: false),
                     CategoryID = table.Column<int>(type: "INTEGER", nullable: true),
-                    CategoryModelCategoryID = table.Column<int>(type: "INTEGER", nullable: true)
+                    CategoryModelCategoryID = table.Column<int>(type: "INTEGER", nullable: true),
+                    StockReportModelStockReportID = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -69,6 +83,12 @@ namespace Persistence.Migrations
                         column: x => x.CategoryModelCategoryID,
                         principalTable: "Categories",
                         principalColumn: "CategoryID");
+                    table.ForeignKey(
+                        name: "FK_Stocks_StockReports_StockReportModelStockReportID",
+                        column: x => x.StockReportModelStockReportID,
+                        principalTable: "StockReports",
+                        principalColumn: "StockReportID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -170,6 +190,11 @@ namespace Persistence.Migrations
                 name: "IX_Stocks_CategoryModelCategoryID",
                 table: "Stocks",
                 column: "CategoryModelCategoryID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stocks_StockReportModelStockReportID",
+                table: "Stocks",
+                column: "StockReportModelStockReportID");
         }
 
         /// <inheritdoc />
@@ -192,6 +217,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "StockReports");
         }
     }
 }
