@@ -47,6 +47,18 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     image: consumption-service-api:latest
+  
+  report-service-api:
+    build:
+      context: .
+      dockerfile: ./Report-Service.API/Dockerfile
+    ports:
+      - "8090:8090"
+    networks:
+      - foodstock-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    image: report-service-api:latest
 
 networks:
   foodstock-network:
