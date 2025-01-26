@@ -15,6 +15,7 @@ public class EFCoreContext : DbContext
     public DbSet<ShoppingListModel> ShoppingLists { get; set; }
     public DbSet<ConsumptionModel> Consumptions { get; set; }
     public DbSet<StockReportModel> StockReports { get; set; }
+    public DbSet<SpoilReportModel> SpoilReports { get; set; }
 
     // public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
     public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
@@ -107,20 +108,29 @@ public class EFCoreContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade); // If a stock is deleted, the consumption will also be deleted
         });
 
-            modelBuilder.Entity<StockReportModel>(eb =>
-            {
-                eb.HasKey(pk => pk.StockReportID);
-                eb.Property(p => p.ReportType).IsRequired();
-                eb.HasMany(p => p.Stocks)
-                    .WithOne()
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
+        modelBuilder.Entity<StockReportModel>(eb =>
+        {
+            eb.HasKey(pk => pk.StockReportID);
+            eb.Property(p => p.ReportType).IsRequired();
+            eb.HasMany(p => p.Stocks)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SpoilReportModel>(eb =>
+        {
+            eb.HasKey(pk => pk.SpoilReportID);
+            eb.Property(p => p.ReportType).IsRequired();
+            eb.HasMany(p => p.Itens)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         base.OnModelCreating(modelBuilder); // Call the base method to apply the changes.
     }
     public override int SaveChanges()
     {
-        var modifiedStocks = ChangeTracker.Entries<StockModel>()
+        var modifiedStocks = ChangeTracker.Entries<StockModel>() // Observer pattern for StockModel
             .Where(e => e.State == EntityState.Modified)
             .ToList();
 
