@@ -14,11 +14,11 @@ public class StockReportModel
     [JsonIgnore]
     public List<StockModel> Stocks { get; set; } = new List<StockModel>(); // Initialize with a default value
 
-    public StockReportModel(int StockReportID, ReportTypeEnum ReportType, List<StockModel> Stocks)
+    public StockReportModel(int stockReportID, ReportTypeEnum reportType, List<StockModel> stocks)
     {
-        this.StockReportID = StockReportID;
-        this.ReportType = ReportType;
-        this.Stocks = Stocks;
+        StockReportID = stockReportID;
+        ReportType = reportType;
+        Stocks = stocks;
     }
 
     public StockReportModel()
@@ -27,14 +27,14 @@ public class StockReportModel
 
     public override string ToString()
     {
-        return $"[StockReportID: {StockReportID}, ReportType: {ReportType}, Stocks: {Stocks}]";
+        return $"[{StockReportID}, {ReportType}]";
     }
 
     public override bool Equals(object? obj)
     {
         if (obj is StockReportModel other)
         {
-            return StockReportID == other.StockReportID;
+            return other.StockReportID == StockReportID;
         }
 
         return false;
