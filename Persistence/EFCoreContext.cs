@@ -16,6 +16,7 @@ public class EFCoreContext : DbContext
     public DbSet<ConsumptionModel> Consumptions { get; set; }
     public DbSet<StockReportModel> StockReports { get; set; }
     public DbSet<SpoilReportModel> SpoilReports { get; set; }
+    public DbSet<ConsumptionReportModel> ConsumptionReports { get; set; }
 
     // public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
     public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
@@ -123,7 +124,17 @@ public class EFCoreContext : DbContext
             eb.Property(p => p.ReportType).IsRequired();
             eb.HasMany(p => p.Itens)
                 .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<ConsumptionReportModel>(eb =>
+        {
+            eb.HasKey(pk => pk.ConsumptionReportID);
+            eb.Property(p => p.ReportInitialDate).IsRequired();
+            eb.Property(p => p.ReportFinalDate).IsRequired();
+            eb.HasMany(p => p.Consumptions)
+                .WithOne()
+                .OnDelete(DeleteBehavior.NoAction); // If a consumption report is deleted, the consumptions will not be deleted
         });
 
         base.OnModelCreating(modelBuilder); // Call the base method to apply the changes.
