@@ -26,6 +26,20 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConsumptionReports",
+                columns: table => new
+                {
+                    ConsumptionReportID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ReportInitialDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ReportFinalDate = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConsumptionReports", x => x.ConsumptionReportID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShoppingLists",
                 columns: table => new
                 {
@@ -38,6 +52,19 @@ namespace Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ShoppingLists", x => x.ShoppingListID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpoilReports",
+                columns: table => new
+                {
+                    SpoilReportID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ReportType = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpoilReports", x => x.SpoilReportID);
                 });
 
             migrationBuilder.CreateTable(
@@ -99,11 +126,17 @@ namespace Persistence.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Quantity = table.Column<float>(type: "REAL", nullable: false),
                     ConsumptionDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    StockID = table.Column<int>(type: "INTEGER", nullable: false)
+                    StockID = table.Column<int>(type: "INTEGER", nullable: false),
+                    ConsumptionReportModelConsumptionReportID = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Consumptions", x => x.ConsumptionID);
+                    table.ForeignKey(
+                        name: "FK_Consumptions_ConsumptionReports_ConsumptionReportModelConsumptionReportID",
+                        column: x => x.ConsumptionReportModelConsumptionReportID,
+                        principalTable: "ConsumptionReports",
+                        principalColumn: "ConsumptionReportID");
                     table.ForeignKey(
                         name: "FK_Consumptions_Stocks_StockID",
                         column: x => x.StockID,
@@ -121,11 +154,17 @@ namespace Persistence.Migrations
                     ItemDescription = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     SpoilDate = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Measure = table.Column<float>(type: "REAL", nullable: false),
-                    StockID = table.Column<int>(type: "INTEGER", nullable: false)
+                    StockID = table.Column<int>(type: "INTEGER", nullable: false),
+                    SpoilReportModelSpoilReportID = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Items", x => x.ItemID);
+                    table.ForeignKey(
+                        name: "FK_Items_SpoilReports_SpoilReportModelSpoilReportID",
+                        column: x => x.SpoilReportModelSpoilReportID,
+                        principalTable: "SpoilReports",
+                        principalColumn: "SpoilReportID");
                     table.ForeignKey(
                         name: "FK_Items_Stocks_StockID",
                         column: x => x.StockID,
@@ -162,9 +201,19 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Consumptions_ConsumptionReportModelConsumptionReportID",
+                table: "Consumptions",
+                column: "ConsumptionReportModelConsumptionReportID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Consumptions_StockID",
                 table: "Consumptions",
                 column: "StockID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_SpoilReportModelSpoilReportID",
+                table: "Items",
+                column: "SpoilReportModelSpoilReportID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Items_StockID",
@@ -208,6 +257,12 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "ShoppingItens");
+
+            migrationBuilder.DropTable(
+                name: "ConsumptionReports");
+
+            migrationBuilder.DropTable(
+                name: "SpoilReports");
 
             migrationBuilder.DropTable(
                 name: "ShoppingLists");

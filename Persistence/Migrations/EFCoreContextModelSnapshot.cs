@@ -45,6 +45,9 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("ConsumptionDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("ConsumptionReportModelConsumptionReportID")
+                        .HasColumnType("INTEGER");
+
                     b.Property<float>("Quantity")
                         .HasColumnType("REAL");
 
@@ -53,9 +56,28 @@ namespace Persistence.Migrations
 
                     b.HasKey("ConsumptionID");
 
+                    b.HasIndex("ConsumptionReportModelConsumptionReportID");
+
                     b.HasIndex("StockID");
 
                     b.ToTable("Consumptions");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.ConsumptionReportModel", b =>
+                {
+                    b.Property<int>("ConsumptionReportID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ReportFinalDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ReportInitialDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ConsumptionReportID");
+
+                    b.ToTable("ConsumptionReports");
                 });
 
             modelBuilder.Entity("FoodStock.Models.ItemModel", b =>
@@ -74,10 +96,15 @@ namespace Persistence.Migrations
                     b.Property<DateTime?>("SpoilDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("SpoilReportModelSpoilReportID")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("StockID")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ItemID");
+
+                    b.HasIndex("SpoilReportModelSpoilReportID");
 
                     b.HasIndex("StockID");
 
@@ -127,6 +154,20 @@ namespace Persistence.Migrations
                     b.HasKey("ShoppingListID");
 
                     b.ToTable("ShoppingLists");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.SpoilReportModel", b =>
+                {
+                    b.Property<int>("SpoilReportID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReportType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("SpoilReportID");
+
+                    b.ToTable("SpoilReports");
                 });
 
             modelBuilder.Entity("FoodStock.Models.StockModel", b =>
@@ -191,6 +232,11 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("FoodStock.Models.ConsumptionModel", b =>
                 {
+                    b.HasOne("FoodStock.Models.ConsumptionReportModel", null)
+                        .WithMany("Consumptions")
+                        .HasForeignKey("ConsumptionReportModelConsumptionReportID")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("FoodStock.Models.StockModel", "Stock")
                         .WithMany()
                         .HasForeignKey("StockID")
@@ -202,6 +248,11 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("FoodStock.Models.ItemModel", b =>
                 {
+                    b.HasOne("FoodStock.Models.SpoilReportModel", null)
+                        .WithMany("Itens")
+                        .HasForeignKey("SpoilReportModelSpoilReportID")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("FoodStock.Models.StockModel", "Stock")
                         .WithMany("Items")
                         .HasForeignKey("StockID")
@@ -254,9 +305,19 @@ namespace Persistence.Migrations
                     b.Navigation("Stocks");
                 });
 
+            modelBuilder.Entity("FoodStock.Models.ConsumptionReportModel", b =>
+                {
+                    b.Navigation("Consumptions");
+                });
+
             modelBuilder.Entity("FoodStock.Models.ShoppingListModel", b =>
                 {
                     b.Navigation("ShoppingItens");
+                });
+
+            modelBuilder.Entity("FoodStock.Models.SpoilReportModel", b =>
+                {
+                    b.Navigation("Itens");
                 });
 
             modelBuilder.Entity("FoodStock.Models.StockModel", b =>
