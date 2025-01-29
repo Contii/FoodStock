@@ -18,8 +18,8 @@ public class EFCoreContext : DbContext
     public DbSet<SpoilReportModel> SpoilReports { get; set; }
     public DbSet<ConsumptionReportModel> ConsumptionReports { get; set; }
 
-    // public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
-    public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
+    public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
+    // public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
     {    
     }
 
