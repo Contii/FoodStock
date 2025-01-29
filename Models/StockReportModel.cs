@@ -11,7 +11,6 @@ public class StockReportModel
     [EnumDataType(typeof(ReportTypeEnum))]
     public ReportTypeEnum ReportType { get; set; }
 
-    [JsonIgnore]
     public List<StockModel> Stocks { get; set; } = new List<StockModel>(); // Initialize with a default value
 
     public StockReportModel(int stockReportID, ReportTypeEnum reportType, List<StockModel> stocks)

@@ -22,14 +22,19 @@ namespace FoodStock.Report_Service.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStockReports()
         {
-            return Ok(await _context.StockReports.ToListAsync()); // Return all stock reports from the database.
+            var stockReports = await _context.StockReports
+                .Include(sr => sr.Stocks) // Include the Stocks collection
+                .ToListAsync(); // Return all stock reports from the database.
+            return Ok(stockReports);
         }
 
         // Obtaining a specific stockReport by ID.
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStockReport(int id)
         {
-            var stockReport = await _context.StockReports.FindAsync(id); // Verify if the stockReport exists.
+            var stockReport = await _context.StockReports
+                .Include(sr => sr.Stocks) // Include the Stocks collection
+                .FirstOrDefaultAsync(sr => sr.StockReportID == id); // Verify if the stockReport exists.
             return stockReport is not null ? Ok(stockReport) : NotFound(); // Return the stockReport if it exists, otherwise return a 404.
         }
 

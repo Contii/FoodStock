@@ -40,14 +40,52 @@ namespace FoodStock.Persistence.Observers
 
                 }
 
-                if (newStock.Quantity < newStock.MinQuantity) // Verify if the quantity is below the minimum
+                if (newStock.Quantity < newStock.MinQuantity)
                 {
                     Console.WriteLine($"Stock {newStock.Name} está abaixo do mínimo. Quantidade atual: {newStock.Quantity}, MinQuantity: {newStock.MinQuantity}");
+
+                    // Update the StockReport with ID 1 (Low Stock)
+                    var stockReport = _context.StockReports.Include(sr => sr.Stocks).FirstOrDefault(sr => sr.StockReportID == 1);
+                    if (stockReport != null && !stockReport.Stocks.Contains(newStock))
+                    {
+                        stockReport.Stocks.Add(newStock);
+                        _context.Entry(stockReport).State = EntityState.Modified;
+                        _context.SaveChanges();
+                    }
+                } else
+                {
+                    // Remove the stock from the StockReport with ID 1 (Low Stock)
+                    var stockReport = _context.StockReports.Include(sr => sr.Stocks).FirstOrDefault(sr => sr.StockReportID == 1);
+                    if (stockReport != null && stockReport.Stocks.Contains(newStock))
+                    {
+                        stockReport.Stocks.Remove(newStock);
+                        _context.Entry(stockReport).State = EntityState.Modified;
+                        _context.SaveChanges();
+                    }
                 }
 
-                if (newStock.Quantity > newStock.MaxQuantity) // Verify if the quantity is above the maximum
+                if (newStock.Quantity > newStock.MaxQuantity)
                 {
                     Console.WriteLine($"Stock {newStock.Name} está acima do máximo. Quantidade atual: {newStock.Quantity}, MaxQuantity: {newStock.MaxQuantity}");
+
+                    // Update the StockReport with ID 2 (High Stock)
+                    var stockReport = _context.StockReports.Include(sr => sr.Stocks).FirstOrDefault(sr => sr.StockReportID == 2);
+                    if (stockReport != null && !stockReport.Stocks.Contains(newStock))
+                    {
+                        stockReport.Stocks.Add(newStock);
+                        _context.Entry(stockReport).State = EntityState.Modified;
+                        _context.SaveChanges();
+                    }
+                } else
+                {
+                    // Remove the stock from the StockReport with ID 2 (High Stock)
+                    var stockReport = _context.StockReports.Include(sr => sr.Stocks).FirstOrDefault(sr => sr.StockReportID == 2);
+                    if (stockReport != null && stockReport.Stocks.Contains(newStock))
+                    {
+                        stockReport.Stocks.Remove(newStock);
+                        _context.Entry(stockReport).State = EntityState.Modified;
+                        _context.SaveChanges();
+                    }
                 }
             }
         }

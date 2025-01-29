@@ -22,16 +22,22 @@ namespace FoodStock.Report_Service.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetSpoilReports()
         {
-            return Ok(await _context.SpoilReports.ToListAsync()); // Return all spoil reports from the database.
+            var spoilReports = await _context.SpoilReports
+                .Include(sr => sr.Itens) // Include the Itens collection
+                .ToListAsync(); // Return all spoil reports from the database.
+            return Ok(spoilReports);
         }
 
         // Obtaining a specific spoilReport by ID.
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSpoilReport(int id)
         {
-            var spoilReport = await _context.SpoilReports.FindAsync(id); // Verify if the spoilReport exists.
+            var spoilReport = await _context.SpoilReports
+                .Include(sr => sr.Itens) // Include the Itens collection
+                .FirstOrDefaultAsync(sr => sr.SpoilReportID == id); // Verify if the spoilReport exists.
             return spoilReport is not null ? Ok(spoilReport) : NotFound(); // Return the spoilReport if it exists, otherwise return a 404.
         }
+
 
         // Create a new spoilReport.
         [HttpPost]
