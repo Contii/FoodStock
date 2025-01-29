@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using FoodStock.Converters;
 
 namespace FoodStock.Models;
 
@@ -10,7 +11,11 @@ public class ShoppingListModel
     [Required]
     public string Name { get; set; }
 
-    public DateTime? ShoppingDate { get; set; }
+    private DateTime? _shoppingDate { get; set; }
+
+    [JsonConverter(typeof(JsonDateConverter))]
+    public DateTime? ShoppingDate
+    { get => _shoppingDate?.Date; set => _shoppingDate = value?.Date; }
 
     [Required]
     public ShoppingStatusEnum Status { get; set; }

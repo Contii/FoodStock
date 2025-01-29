@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using FoodStock.Converters;
 
 namespace FoodStock.Models;
 
@@ -8,10 +9,20 @@ public class ConsumptionReportModel
     public int ConsumptionReportID { get; set; }
 
     [Required]
-    public DateTime ReportInitialDate { get; set; }
+    private DateTime _reportInitialDate { get; set; }
 
     [Required]
-    public DateTime ReportFinalDate { get; set; }
+    [JsonConverter(typeof(JsonDateConverter))]
+    public DateTime ReportInitialDate // Ensure only the date part is returned and stored
+    { get => _reportInitialDate.Date; set => _reportInitialDate = value.Date; }
+
+    [Required]
+    private DateTime _reportFinalDate { get; set; }
+
+    [Required]
+    [JsonConverter(typeof(JsonDateConverter))]
+    public DateTime ReportFinalDate
+    { get => _reportFinalDate.Date; set => _reportFinalDate = value.Date; }
 
     [JsonIgnore]
     public List<ConsumptionModel> Consumptions { get; set; } = new List<ConsumptionModel>(); // Initialize with a default value
@@ -47,5 +58,4 @@ public class ConsumptionReportModel
     {
         return ConsumptionReportID;
     }
-
 }

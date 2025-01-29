@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using FoodStock.Converters;
 
 namespace FoodStock.Models;
 
@@ -9,7 +11,12 @@ public class ItemModel
     [MaxLength(100)]
     public string? ItemDescription { get; set; }
 
-    public DateTime? SpoilDate { get; set; }
+    private DateTime? _spoilDate { get; set; }
+
+    [JsonConverter(typeof(JsonDateConverter))]
+    public DateTime? SpoilDate
+    { get => _spoilDate?.Date; set => _spoilDate = value?.Date;
+    }
 
     [Required]
     public float Measure { get; set; }
