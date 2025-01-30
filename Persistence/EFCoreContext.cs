@@ -152,6 +152,18 @@ public class EFCoreContext : DbContext
             stock.Notify(oldQuantity);
         }
 
+        var newConsumptions = ChangeTracker.Entries<ConsumptionModel>()
+            .Where(e => e.State == EntityState.Added)
+            .ToList();
+
+        foreach (var entry in newConsumptions)
+        {
+            var consumption = entry.Entity;
+            var consumptionObserver = new ConsumptionObserver(this);
+            consumption.Attach(consumptionObserver);
+            consumption.Notify(0); // Notify with oldQuantity as 0 since it's a new consumption
+        }
+
         return base.SaveChanges();
     }
 }

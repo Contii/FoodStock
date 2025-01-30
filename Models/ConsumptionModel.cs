@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using FoodStock.Common.Interfaces;
 using FoodStock.Converters;
 
 namespace FoodStock.Models;
 
-public class ConsumptionModel
+public class ConsumptionModel : ISubject
 {
+    private readonly List<IObserver> _observers = new List<IObserver>();
     public int ConsumptionID { get; set; }
 
     [Required]
@@ -60,4 +62,22 @@ public class ConsumptionModel
     {
         return ConsumptionID.GetHashCode();
     }
+    public void Attach(IObserver observer)
+    {
+        _observers.Add(observer);
+    }
+
+    public void Detach(IObserver observer)
+    {
+        _observers.Remove(observer);
+    }
+
+    public void Notify(float oldQuantity)
+    {
+        foreach (var observer in _observers)
+        {
+            observer.Update(this, oldQuantity);
+        }
+    }
+    
 }
