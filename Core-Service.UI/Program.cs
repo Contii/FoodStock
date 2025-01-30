@@ -14,6 +14,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Register the HttpClient service with a base address for dependency injection. This HttpClient will be used to make HTTP requests to the API.
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:8050") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:8070") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:8090") });
+
 
 // Register the CategoryService, StockService, and ItemService for dependency injection.
 builder.Services.AddScoped<CategoryService>();
