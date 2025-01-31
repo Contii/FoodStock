@@ -47,7 +47,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization(); // Auth Middleware, not used in this project but good for future security implementations.
-app.UseCors("AllowAll"); // Use the CORS policy defined above
+
+// Apply CORS policies
+app.UseCors("AllowAll");
+
 app.MapControllers();
 
 // Configure the application to listen on a specific port

@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Net.Http.Json;
 using FoodStock.Models;
 
@@ -5,9 +6,9 @@ public class CategoryService
 {
     private readonly HttpClient _httpClient;
 
-    public CategoryService(HttpClient httpClient) // Inject HttpClient into the service
+    public CategoryService(IHttpClientFactory httpClientFactory) // Inject HttpClient into the service
     {
-        _httpClient = httpClient;
+        _httpClient = httpClientFactory.CreateClient("Core-Service.API");
     }
 
     // Fetch all categories from the API

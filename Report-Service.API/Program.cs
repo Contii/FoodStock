@@ -10,24 +10,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-// Configure CORS policies
+// Configure CORS to allow any origin, method, and header
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowBackend", builder =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("http://localhost:8050") // Backend URL
+        builder.AllowAnyOrigin() // .WithOrigins("http://localhost:8162", "http://localhost:8163") // frontend URL
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
-
-    options.AddPolicy("AllowFrontendReadOnly", builder =>
-    {
-        builder.WithOrigins("http://localhost:8060") // Frontend URL
-               .WithMethods("GET")
-               .AllowAnyHeader();
-    });
 });
-
 
 // Configure the DbContext with SQLite (?? means default connection string).
 builder.Services.AddDbContext<EFCoreContext>(options =>
@@ -55,11 +47,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization(); // Auth Middleware, not used in this project but good for future security implementations.
-// Apply CORS policies
-app.UseCors("AllowBackend"); // Apply the AllowBackend policy globally
 
-// Apply the AllowFrontendReadOnly policy to specific endpoints
-app.MapControllers().RequireCors("AllowFrontendReadOnly");
+// Apply CORS policies
+app.UseCors("AllowAll");
+
+app.MapControllers();
 
 // Configure the application to listen on a specific port
 //app.Urls.Add("https://localhost:8171");

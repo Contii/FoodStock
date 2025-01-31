@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Net.Http.Json;
 using FoodStock.Models;
 
@@ -6,9 +7,9 @@ public class StockService
 {
     private readonly HttpClient _httpClient;
 
-    public StockService(HttpClient httpClient)
+    public StockService(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = httpClientFactory.CreateClient("Core-Service.API");
     }
 
     // Fetch all stocks from the API

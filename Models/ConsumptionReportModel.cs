@@ -24,7 +24,6 @@ public class ConsumptionReportModel
     public DateTime ReportFinalDate
     { get => _reportFinalDate.Date; set => _reportFinalDate = value.Date; }
 
-    [JsonIgnore]
     public List<ConsumptionModel> Consumptions { get; set; } = new List<ConsumptionModel>(); // Initialize with a default value
 
     public ConsumptionReportModel(int consumptionReportID, DateTime reportInitialDate, DateTime reportFinalDate, List<ConsumptionModel> consumptions)

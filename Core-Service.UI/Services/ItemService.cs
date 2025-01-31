@@ -8,9 +8,9 @@ public class ItemService
 {
     private readonly HttpClient _httpClient;
 
-    public ItemService(HttpClient httpClient)
+    public ItemService(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = httpClientFactory.CreateClient("Core-Service.API");
     }
 
     // Fetch all items from the API
