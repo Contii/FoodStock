@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{84211ED9-4365-4F14-AA5F-9C73635988C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Report-service.API", "Report-service.API\Report-service.API.csproj", "{E5849CAB-1D7A-42C4-8680-D08A3CC380B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Report-Service.API", "Report-Service.API\Report-Service.API.csproj", "{E5849CAB-1D7A-42C4-8680-D08A3CC380B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
