@@ -19,7 +19,7 @@ public class EFCoreContext : DbContext
     public DbSet<ConsumptionReportModel> ConsumptionReports { get; set; }
 
     public EFCoreContext(DbContextOptions<EFCoreContext> options) : base(options)
-    // public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
+    //public EFCoreContext( ) // Uncomment this and comment above line to create/update migration files.
     {    
     }
 
@@ -138,32 +138,5 @@ public class EFCoreContext : DbContext
         });
 
         base.OnModelCreating(modelBuilder); // Call the base method to apply the changes.
-    }
-    public override int SaveChanges()
-    {
-        var modifiedStocks = ChangeTracker.Entries<StockModel>() // Observer pattern for StockModel
-            .Where(e => e.State == EntityState.Modified)
-            .ToList();
-
-        foreach (var entry in modifiedStocks)
-        {
-            var oldQuantity = entry.OriginalValues.GetValue<float>("Quantity");
-            var stock = entry.Entity;
-            stock.Notify(oldQuantity);
-        }
-
-        var newConsumptions = ChangeTracker.Entries<ConsumptionModel>()
-            .Where(e => e.State == EntityState.Added)
-            .ToList();
-
-        foreach (var entry in newConsumptions)
-        {
-            var consumption = entry.Entity;
-            var consumptionObserver = new ConsumptionObserver(this);
-            consumption.Attach(consumptionObserver);
-            consumption.Notify(0); // Notify with oldQuantity as 0 since it's a new consumption
-        }
-
-        return base.SaveChanges();
     }
 }

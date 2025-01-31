@@ -11,7 +11,6 @@ public class SpoilReportModel
     [EnumDataType(typeof(ReportTypeEnum))]
     public ReportTypeEnum ReportType { get; set; }
 
-    [JsonIgnore]
     public List<ItemModel> Itens { get; set; } = new List<ItemModel>(); // Initialize with a default value
 
     public SpoilReportModel(int spoilReportID, ReportTypeEnum reportType, List<ItemModel> itens)

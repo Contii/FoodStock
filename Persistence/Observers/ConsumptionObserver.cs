@@ -32,8 +32,6 @@ namespace FoodStock.Persistence.Observers
                         _context.Entry(report).State = EntityState.Modified;
                     }
                 }
-
-                _context.SaveChanges();
             }
         }
     }

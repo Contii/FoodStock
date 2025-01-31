@@ -110,6 +110,7 @@ namespace FoodStock.Core_Service.API.Controllers
             stock.Notify(oldQuantity); // Notify the observer with the old stock state
             // ========================================================
 
+            await _context.SaveChangesAsync(); // Save the changes after notifying observer.
             return Ok(stock);
         }
 

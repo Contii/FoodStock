@@ -34,10 +34,11 @@ namespace FoodStock.Persistence.Observers
 
                     // Ensure the existing stock is tracked correctly
                     _context.Entry(newStock).State = EntityState.Unchanged;
-
                     _context.Consumptions.Add(consumption);
-                    _context.SaveChanges();
 
+                    // Notify the ConsumptionObserver with the new consumption state
+                    var consumptionObserver = new ConsumptionObserver(_context);
+                    consumptionObserver.Update(consumption, 0);
                 }
 
                 if (newStock.Quantity < newStock.MinQuantity)
@@ -50,9 +51,9 @@ namespace FoodStock.Persistence.Observers
                     {
                         stockReport.Stocks.Add(newStock);
                         _context.Entry(stockReport).State = EntityState.Modified;
-                        _context.SaveChanges();
                     }
-                } else
+                }
+                else
                 {
                     // Remove the stock from the StockReport with ID 1 (Low Stock)
                     var stockReport = _context.StockReports.Include(sr => sr.Stocks).FirstOrDefault(sr => sr.StockReportID == 1);
@@ -60,7 +61,6 @@ namespace FoodStock.Persistence.Observers
                     {
                         stockReport.Stocks.Remove(newStock);
                         _context.Entry(stockReport).State = EntityState.Modified;
-                        _context.SaveChanges();
                     }
                 }
 
@@ -74,9 +74,9 @@ namespace FoodStock.Persistence.Observers
                     {
                         stockReport.Stocks.Add(newStock);
                         _context.Entry(stockReport).State = EntityState.Modified;
-                        _context.SaveChanges();
                     }
-                } else
+                }
+                else
                 {
                     // Remove the stock from the StockReport with ID 2 (High Stock)
                     var stockReport = _context.StockReports.Include(sr => sr.Stocks).FirstOrDefault(sr => sr.StockReportID == 2);
@@ -84,7 +84,6 @@ namespace FoodStock.Persistence.Observers
                     {
                         stockReport.Stocks.Remove(newStock);
                         _context.Entry(stockReport).State = EntityState.Modified;
-                        _context.SaveChanges();
                     }
                 }
             }
