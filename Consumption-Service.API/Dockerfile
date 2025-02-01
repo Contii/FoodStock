@@ -10,6 +10,7 @@ COPY Consumption-Service.API.sln .
 # Model/*.csproj means move all files with the .csproj extension in the Models folder inside the container
 COPY Models/Models.csproj ./Models/
 COPY Persistence/Persistence.csproj ./Persistence/
+COPY Common/Common.csproj ./Common/
 COPY Consumption-Service.API/Consumption-Service.API.csproj ./Consumption-Service.API/
 # restore all NuGet packages, including the project file
 RUN ls -l /app
@@ -19,6 +20,7 @@ RUN dotnet restore Consumption-Service.API.sln
 # copy the remaining files to the working directory of the container
 COPY Models/. ./Models/
 COPY Persistence/. ./Persistence/
+COPY Common/. ./Common/
 COPY Consumption-Service.API/. ./Consumption-Service.API/
 # build and publish the application using the Release configuration
 WORKDIR /app/Consumption-Service.API
